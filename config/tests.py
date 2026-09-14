@@ -1,6 +1,10 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.test import SimpleTestCase
+
+from config.settings import build_databases
 
 
 class StaticFilesFinderTests(SimpleTestCase):
@@ -38,3 +42,44 @@ class StaticFilesFinderTests(SimpleTestCase):
         self.assertEqual(resposta.status_code, 200)
         corpo = b"".join(resposta.streaming_content)
         self.assertIn(b"--vm-color-primary", corpo)
+
+
+class DatabaseConfigTests(SimpleTestCase):
+    def test_sem_database_url_usa_sqlite(self):
+        base = Path("/tmp/valvulman")
+        bancos = build_databases(database_url=None, debug=True, base_dir=base)
+        self.assertEqual(bancos["default"]["ENGINE"], "django.db.backends.sqlite3")
+        self.assertEqual(bancos["default"]["NAME"], base / "db.sqlite3")
+
+    def test_database_url_vazia_usa_sqlite(self):
+        bancos = build_databases(
+            database_url="   ",
+            debug=True,
+            base_dir=Path("/tmp/valvulman"),
+        )
+        self.assertEqual(bancos["default"]["ENGINE"], "django.db.backends.sqlite3")
+
+    def test_com_database_url_usa_postgresql(self):
+        bancos = build_databases(
+            database_url="postgres://usuario:senha@localhost:5432/valvulman",
+            debug=False,
+            base_dir=Path("/tmp/valvulman"),
+        )
+        engine = bancos["default"]["ENGINE"]
+        self.assertTrue(
+            engine.startswith("django.db.backends.postgresql"),
+            engine,
+        )
+        self.assertEqual(bancos["default"]["NAME"], "valvulman")
+        self.assertEqual(bancos["default"].get("OPTIONS", {}).get("sslmode"), "require")
+
+    def test_database_url_em_debug_nao_exige_ssl(self):
+        bancos = build_databases(
+            database_url="postgres://usuario:senha@localhost:5432/valvulman",
+            debug=True,
+            base_dir=Path("/tmp/valvulman"),
+        )
+        self.assertNotEqual(
+            bancos["default"].get("OPTIONS", {}).get("sslmode"),
+            "require",
+        )

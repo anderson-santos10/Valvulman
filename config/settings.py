@@ -41,6 +41,29 @@ def _env_list(name: str, default: str) -> list[str]:
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
+def build_databases(*, database_url: str | None, debug: bool, base_dir: Path) -> dict:
+    """SQLite local quando DATABASE_URL está ausente; PostgreSQL em produção."""
+    url = (database_url or "").strip()
+    if not url:
+        return {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": base_dir / "db.sqlite3",
+            }
+        }
+
+    import dj_database_url
+
+    return {
+        "default": dj_database_url.parse(
+            url,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=not debug,
+        )
+    }
+
+
 _load_env_file(BASE_DIR / ".env")
 
 
@@ -127,13 +150,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ---------------------------------------------------------------------------
 # Banco de dados
 # ---------------------------------------------------------------------------
+# Sem DATABASE_URL → SQLite em db.sqlite3 (desenvolvimento).
+# Com DATABASE_URL → PostgreSQL (Railway/produção). ssl_require só com DEBUG=False.
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+DATABASES = build_databases(
+    database_url=_env("DATABASE_URL"),
+    debug=DEBUG,
+    base_dir=BASE_DIR,
+)
 
 
 # ---------------------------------------------------------------------------
