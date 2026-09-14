@@ -1,0 +1,67 @@
+.validar-page {
+    margin: 0;
+    min-height: 100vh;
+    background: #e2e8f0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1e293b;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+}
+
+.validar-card {
+    background: #fff;
+    max-width: 520px;
+    width: 100%;
+    padding: 28px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(15, 43, 72, 0.12);
+}
+
+.validar-marca {
+    margin: 0;
+    letter-spacing: 0.16em;
+    font-size: 12px;
+    color: #0f2b48;
+}
+
+.validar-card h1 {
+    margin: 8px 0 16px;
+    font-size: 22px;
+    color: #0f2b48;
+}
+
+.validar-status {
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 10px;
+    text-align: center;
+    border: 2px solid #0f2b48;
+}
+
+.situacao-cancelado .validar-status,
+.situacao-nao-encontrado .validar-status {
+    border-color: #b91c1c;
+    color: #b91c1c;
+}
+
+.situacao-expirado .validar-status {
+    border-color: #b45309;
+    color: #b45309;
+}
+
+.validar-card dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+}
+
+.validar-card dt {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.validar-card dd {
+    margin: 2px 0 0;
+    font-weight: 700;
+}

@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ ordem.numero }} | Valvulman{% endblock %}
+{% block page_heading %}{{ ordem.numero }}{% endblock %}
+{% block breadcrumb %}Operação / Ordens de serviço{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ ordem.numero }}</h1>
+            <p>{{ ordem.cliente.nome }} — {{ ordem.get_status_display }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:lista_ordens' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:fila_ordens' %}" class="btn-acao visualizar">Fila</a>
+            <a href="{% url 'servicos:imprimir_ordem' ordem.pk %}" class="btn-acao imprimir">Imprimir</a>
+            {% if ordem.pode_editar %}
+                <a href="{% url 'servicos:editar_ordem' ordem.pk %}" class="vm-btn vm-btn-secondary">Editar</a>
+            {% endif %}
+            {% if ordem.pode_receber %}
+                <form method="post" action="{% url 'servicos:receber_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao visualizar">Receber OS</button>
+                </form>
+            {% endif %}
+            {% if ordem.pode_iniciar %}
+                <form method="post" action="{% url 'servicos:iniciar_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao visualizar">Iniciar execução</button>
+                </form>
+            {% endif %}
+            {% if ordem.pode_aguardar_revisao %}
+                <form method="post" action="{% url 'servicos:revisao_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao visualizar">Aguardando revisão</button>
+                </form>
+            {% endif %}
+            {% if ordem.pode_concluir %}
+                <form method="post" action="{% url 'servicos:concluir_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Concluir OS</button>
+                </form>
+            {% endif %}
+            {% if ordem.pode_entregar %}
+                <form method="post" action="{% url 'servicos:entregar_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Marcar entregue</button>
+                </form>
+            {% endif %}
+            {% if ordem.status == 'concluida' or ordem.status == 'entregue' %}
+                {% if perms.servicos.add_cobranca %}
+                <a href="{% url 'servicos:gerar_cobranca_ordem' ordem.pk %}" class="btn-nova-os">Gerar cobrança</a>
+                {% endif %}
+            {% endif %}
+            {% if ordem.pode_cancelar %}
+                <form method="post" action="{% url 'servicos:cancelar_ordem' ordem.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Cancelar OS</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Próximo passo</h2>
+            </div>
+        </div>
+        <p><strong>{{ proximo_passo }}</strong></p>
+    </section>
+
+    <div class="os-resumo">
+        <div class="resumo-card">
+            <span class="resumo-label">Itens</span>
+            <strong class="resumo-valor">{{ progresso.total }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Manômetros</span>
+            <strong class="resumo-valor">{{ progresso.manometros }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Válvulas</span>
+            <strong class="resumo-valor">{{ progresso.valvulas }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Concluídos</span>
+            <strong class="resumo-valor">{{ progresso.concluidos }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Em execução</span>
+            <strong class="resumo-valor">{{ progresso.em_execucao }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Aguardando revisão</span>
+            <strong class="resumo-valor">{{ progresso.aguardando_revisao }}</strong>
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Ordem de serviço</h2>
+                <span class="vm-badge {% if ordem.status == 'concluida' or ordem.status == 'entregue' %}vm-badge--success{% elif ordem.status == 'cancelada' %}vm-badge--danger{% elif ordem.status == 'em_execucao' or ordem.status == 'recebida' %}vm-badge--info{% else %}vm-badge--warning{% endif %}">{{ ordem.get_status_display }}</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' ordem.cliente_id %}">{{ ordem.cliente.nome }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Solicitante</span>
+                <span>{{ ordem.solicitante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Telefone</span>
+                <span>{{ ordem.telefone_solicitante|default:ordem.contato_solicitante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">E-mail</span>
+                <span>{{ ordem.email_solicitante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Recebido por</span>
+                <span>{{ ordem.responsavel_recebimento|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Entrada</span>
+                <span>{{ ordem.data_entrada|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Previsão</span>
+                <span>{{ ordem.data_previsao_entrega|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Orçamento de origem</span>
+                {% if ordem.orcamento_id %}
+                    <strong><a href="{% url 'servicos:detalhe_orcamento' ordem.orcamento_id %}">{{ ordem.orcamento.numero }}</a></strong>
+                {% else %}
+                    <span>—</span>
+                {% endif %}
+            </div>
+            <div>
+                <span class="detalhe-label">Situação</span>
+                <span class="{% if situacao_prazo_codigo == 'atrasada' %}os-situacao-atrasada{% endif %}">{{ situacao_prazo_rotulo|upper }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Conclusão</span>
+                <span>{{ ordem.data_conclusao|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Entrega</span>
+                <span>{{ ordem.data_entrega|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Serviços nesta OS</span>
+                <span>
+                    {% for servico in composicao_servicos %}
+                        {{ servico.rotulo }}: {{ servico.quantidade }}{% if not forloop.last %} · {% endif %}
+                    {% empty %}
+                        —
+                    {% endfor %}
+                </span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ ordem.observacoes|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2 os-progresso">
+                <span class="detalhe-label">Progresso</span>
+                <span>{{ progresso.concluidos }} de {{ progresso.total }} itens concluídos ({{ progresso.percentual }}%)</span>
+                <div class="os-progresso-barra" aria-hidden="true"><span style="width: {{ progresso.percentual }}%;"></span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Itens</h2>
+                <span>Equipamentos recebidos nesta ordem.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Tipo</th>
+                        <th>Serviço</th>
+                        <th>Condição</th>
+                        <th>Status</th>
+                        <th>Calibração</th>
+                        <th>Certificado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ordem.itens.all %}
+                    <tr>
+                        <td>
+                            {% if item.eh_instrumento %}
+                                <a href="{% url 'servicos:detalhe_instrumento' item.instrumento_id %}">
+                                    <strong class="numero-os">{{ item.codigo_equipamento }}</strong>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'servicos:detalhe_valvula' item.valvula_id %}">
+                                    <strong class="numero-os">{{ item.codigo_equipamento }}</strong>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.get_tipo_equipamento_display }}</td>
+                        <td>{{ item.get_servico_solicitado_display }}</td>
+                        <td>{{ item.condicao_recebimento|default:"—" }}</td>
+                        <td>{{ item.get_status_display }}</td>
+                        <td>
+                            {% if item.eh_valvula and item.execucao_valvula_atual %}
+                                <a href="{% url 'servicos:detalhe_execucao_valvula' item.pk %}">{{ item.execucao_valvula_atual.get_resultado_display }}</a>
+                            {% elif item.calibracao_atual %}
+                                <a href="{% url 'servicos:detalhe_calibracao' item.calibracao_atual.pk %}">{{ item.calibracao_atual.numero }}</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.certificado_atual %}
+                                <a href="{% url 'servicos:detalhe_certificado' item.certificado_atual.pk %}">{{ item.certificado_atual.numero }}</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_item_ordem' item.pk %}" class="btn-acao visualizar">Abrir item</a>
+                            {% if item.pode_iniciar_calibracao %}
+                                <form method="post" action="{% url 'servicos:iniciar_item_ordem' item.pk %}" class="logout-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-nova-os">Iniciar serviço</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="tabela-vazia">Nenhum item nesta ordem.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Financeiro</h2>
+                <span>Cobranças geradas a partir desta OS</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Cobrança</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobranca in cobrancas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ cobranca.numero }}</strong></td>
+                        <td>R$ {{ cobranca.valor_final|floatformat:2 }}</td>
+                        <td>{{ cobranca.situacao_rotulo }}</td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_cobranca' cobranca.pk %}" class="btn-acao visualizar">Ver cobrança</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">Nenhuma cobrança vinculada a esta OS.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

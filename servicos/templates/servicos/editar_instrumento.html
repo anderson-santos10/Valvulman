@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar Instrumento | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cliente-page">
+    <div class="cliente-page-header">
+        <div class="cliente-header-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+            </svg>
+        </div>
+        <div>
+            <h1>Editar Instrumento</h1>
+            <p>Atualize os dados cadastrais do instrumento {{ instrumento.codigo }}.</p>
+        </div>
+    </div>
+
+    <div class="cliente-card">
+        {% include "servicos/_form_instrumento.html" with botao_salvar="Salvar alterações" %}
+    </div>
+</div>
+{% endblock %}

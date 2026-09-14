@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Auditoria | Valvulman{% endblock %}
+{% block page_heading %}Auditoria{% endblock %}
+{% block breadcrumb %}Acesso{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Auditoria</h1>
+            <p>Trilha somente leitura das ações relevantes de negócio.</p>
+        </div>
+    </div>
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Objeto ou descrição" autocomplete="off">
+                <select name="usuario">
+                    <option value="">Todos os usuários</option>
+                    {% for usuario in usuarios %}
+                        <option value="{{ usuario.pk }}" {% if request.GET.usuario == usuario.pk|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
+                    {% endfor %}
+                </select>
+                <select name="acao">
+                    <option value="">Todas as ações</option>
+                    {% for acao in acoes %}
+                        <option value="{{ acao }}" {% if request.GET.acao == acao %}selected{% endif %}>{{ acao }}</option>
+                    {% endfor %}
+                </select>
+                <select name="modelo">
+                    <option value="">Todos os modelos</option>
+                    {% for modelo in modelos %}
+                        <option value="{{ modelo }}" {% if request.GET.modelo == modelo %}selected{% endif %}>{{ modelo }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="data_de" value="{{ request.GET.data_de|default:'' }}" aria-label="Data inicial">
+                <input type="date" name="data_ate" value="{{ request.GET.data_ate|default:'' }}" aria-label="Data final">
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os tabela-os--wide">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Usuário</th>
+                        <th>Ação</th>
+                        <th>Modelo</th>
+                        <th>Objeto</th>
+                        <th>Descrição</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>{{ registro.usuario|default:"—" }}</td>
+                        <td>{{ registro.acao }}</td>
+                        <td>{{ registro.modelo }}</td>
+                        <td>{{ registro.objeto_id }}</td>
+                        <td>{{ registro.descricao }}</td>
+                        <td>{{ registro.ip|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">Nenhum registro de auditoria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

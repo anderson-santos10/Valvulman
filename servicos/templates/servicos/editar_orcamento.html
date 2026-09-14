@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar {{ orcamento.numero }} | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/orcamentos.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>Editar {{ orcamento.numero }}</h1>
+            <p>Somente rascunhos podem ser alterados.</p>
+        </div>
+        {% include "servicos/_form_orcamento.html" with botao_salvar="Salvar alterações" %}
+    </div>
+</div>
+{% endblock %}

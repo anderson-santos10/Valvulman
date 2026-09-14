@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ cobranca.numero }} | Valvulman</title>
+    <link rel="stylesheet" href="{% static 'css/imprimir_ordem.css' %}">
+    <link rel="stylesheet" href="{% static 'css/imprimir_cobranca.css' %}">
+</head>
+<body>
+    <div class="os-print-acoes no-print">
+        <a href="{% url 'servicos:detalhe_cobranca' cobranca.pk %}">Voltar</a>
+        <button type="button" id="btn-imprimir-os">Imprimir</button>
+    </div>
+    <article class="os-print-paper">
+        <header class="os-print-header">
+            <img src="{% static 'img/logo_valvulman.svg' %}" alt="Valvulman" width="56" height="56">
+            <div>
+                <strong>VALVULMAN</strong>
+                <span>Gestão técnica</span>
+            </div>
+            <div class="os-print-title">
+                <h1>COBRANÇA</h1>
+                <p>{{ cobranca.numero }}</p>
+            </div>
+        </header>
+        <p class="cobranca-aviso">Documento comercial interno. Não é boleto bancário.</p>
+        <section>
+            <h2>Cobrança</h2>
+            <dl>
+                <div><dt>Número</dt><dd>{{ cobranca.numero }}</dd></div>
+                <div><dt>Emissão</dt><dd>{{ cobranca.data_emissao|date:"d/m/Y" }}</dd></div>
+                <div><dt>Vencimento</dt><dd>{{ cobranca.data_vencimento|date:"d/m/Y" }}</dd></div>
+                <div><dt>Status</dt><dd>{{ cobranca.situacao_rotulo }}</dd></div>
+            </dl>
+        </section>
+        <section>
+            <h2>Cliente</h2>
+            <p><strong>{{ cobranca.cliente.nome }}</strong></p>
+            <p>Documento {{ cobranca.cliente.cnpj }}</p>
+            <p>{{ cobranca.cliente.endereco }}</p>
+        </section>
+        <section>
+            <h2>Descrição</h2>
+            <p>{{ cobranca.descricao }}</p>
+        </section>
+        <section>
+            <h2>Valores</h2>
+            <p>Valor original: R$ {{ cobranca.valor_original|floatformat:2 }}</p>
+            <p>Desconto: R$ {{ cobranca.desconto|floatformat:2 }}</p>
+            <p>Acréscimo: R$ {{ cobranca.acrescimo|floatformat:2 }}</p>
+            <p><strong>Valor final: R$ {{ cobranca.valor_final|floatformat:2 }}</strong></p>
+        </section>
+        <section>
+            <h2>Pagamentos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Forma</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pagamento in pagamentos %}
+                    <tr>
+                        <td>{{ pagamento.data_pagamento|date:"d/m/Y" }}</td>
+                        <td>{{ pagamento.get_forma_pagamento_display }}</td>
+                        <td>R$ {{ pagamento.valor|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">Nenhum pagamento.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>Total pago: R$ {{ total_pago|floatformat:2 }}</p>
+            <p><strong>Saldo: R$ {{ saldo|floatformat:2 }}</strong></p>
+        </section>
+        <section>
+            <h2>Observações</h2>
+            <p>{{ cobranca.observacoes|default:"—" }}</p>
+        </section>
+    </article>
+    <script src="{% static 'js/imprimir_ordem.js' %}"></script>
+</body>
+</html>

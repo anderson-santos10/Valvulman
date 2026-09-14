@@ -1,0 +1,120 @@
+<form method="post" action="" class="cliente-form instrumento-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-alert">
+            <div>{{ form.non_field_errors }}</div>
+        </div>
+    {% endif %}
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">01</div>
+            <div>
+                <h2>Identificação</h2>
+                <p>Código interno do Valvulman, TAG do cliente e série do fabricante.</p>
+            </div>
+        </div>
+
+        <div class="form-group vm-field">
+            <label for="{{ form.cliente.id_for_label }}">{{ form.cliente.label }} <span class="required">*</span></label>
+            {{ form.cliente }}
+            {% if form.cliente.errors %}<div class="form-error">{{ form.cliente.errors.0 }}</div>{% endif %}
+            {% if instrumento %}
+                <p class="form-help">O cliente proprietário não pode ser alterado nesta edição.</p>
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.codigo.id_for_label }}">Código interno <span class="required">*</span></label>
+                {{ form.codigo }}
+                {% if form.codigo.errors %}<div class="form-error">{{ form.codigo.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.tag.id_for_label }}">TAG</label>
+                {{ form.tag }}
+                {% if form.tag.errors %}<div class="form-error">{{ form.tag.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.numero_serie.id_for_label }}">Número de série</label>
+                {{ form.numero_serie }}
+                {% if form.numero_serie.errors %}<div class="form-error">{{ form.numero_serie.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.tipo.id_for_label }}">Tipo <span class="required">*</span></label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}<div class="form-error">{{ form.tipo.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">02</div>
+            <div>
+                <h2>Características</h2>
+                <p>Faixa de medição, unidade e resolução ficam em campos separados.</p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.fabricante.id_for_label }}">Fabricante</label>
+                {{ form.fabricante }}
+                {% if form.fabricante.errors %}<div class="form-error">{{ form.fabricante.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.modelo.id_for_label }}">Modelo</label>
+                {{ form.modelo }}
+                {% if form.modelo.errors %}<div class="form-error">{{ form.modelo.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-row-3">
+            <div class="form-group vm-field">
+                <label for="{{ form.faixa_minima.id_for_label }}">Faixa mínima</label>
+                {{ form.faixa_minima }}
+                {% if form.faixa_minima.errors %}<div class="form-error">{{ form.faixa_minima.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.faixa_maxima.id_for_label }}">Faixa máxima</label>
+                {{ form.faixa_maxima }}
+                {% if form.faixa_maxima.errors %}<div class="form-error">{{ form.faixa_maxima.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.unidade.id_for_label }}">Unidade</label>
+                {{ form.unidade }}
+                {% if form.unidade.errors %}<div class="form-error">{{ form.unidade.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-group vm-field">
+            <label for="{{ form.resolucao.id_for_label }}">Resolução</label>
+            {{ form.resolucao }}
+            {% if form.resolucao.errors %}<div class="form-error">{{ form.resolucao.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="form-group vm-field">
+            <label for="{{ form.observacoes.id_for_label }}">Observações</label>
+            {{ form.observacoes }}
+            {% if form.observacoes.errors %}<div class="form-error">{{ form.observacoes.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="form-group vm-field">
+            <label for="{{ form.ativo.id_for_label }}">{{ form.ativo }} Instrumento ativo</label>
+            {% if form.ativo.errors %}<div class="form-error">{{ form.ativo.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="cliente-form-footer">
+        <div class="form-required-info"><span class="required">*</span> Campos obrigatórios</div>
+        <div class="form-actions">
+            <a href="{% url 'servicos:lista_instrumentos' %}" class="btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn-salvar">{{ botao_salvar }}</button>
+        </div>
+    </div>
+</form>

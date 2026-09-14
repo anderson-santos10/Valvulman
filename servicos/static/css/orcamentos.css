@@ -1,0 +1,11 @@
+.orcamento-totais {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+    padding: 16px 8px 0;
+    font-size: 15px;
+}
+
+.formset-empty-template {
+    display: none;
+}

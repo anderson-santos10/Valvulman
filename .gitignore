@@ -1,0 +1,16 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+.env
+.env.*
+!.env.example
+staticfiles/
+media/
+*.log
+.DS_Store
+Thumbs.db

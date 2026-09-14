@@ -1,0 +1,28 @@
+{% if linhas %}
+<div class="dashboard-chart" data-chart="{{ chart_id }}" role="img" aria-label="{{ titulo }}">
+    <p class="dashboard-chart-title">{{ titulo }}</p>
+    <ul class="dashboard-bars">
+        {% for linha in linhas %}
+        <li class="dashboard-bar{% if linha.alerta %} is-alert{% endif %}">
+            {% if linha.href %}
+            <a class="dashboard-bar-link" href="{{ linha.href }}">
+            {% else %}
+            <span class="dashboard-bar-link">
+            {% endif %}
+                <span class="dashboard-bar-label">{{ linha.rotulo }}</span>
+                <span class="dashboard-bar-track">
+                    <span class="dashboard-bar-fill" style="width: {{ linha.percentual }}%"></span>
+                </span>
+                <span class="dashboard-bar-value">
+                    {% if linha.monetario %}R$ {{ linha.valor|floatformat:2 }}{% else %}{{ linha.valor }}{% endif %}
+                </span>
+            {% if linha.href %}
+            </a>
+            {% else %}
+            </span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}

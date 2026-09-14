@@ -1,0 +1,302 @@
+/* ============================================================
+   ESTILOS DUPLEX / TELA DE LOGIN (VALVULMAN)
+   ============================================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    font-family: var(--vm-font-sans);
+    background-color: var(--vm-color-background);
+    color: var(--vm-color-text);
+}
+
+.login-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Painel Esquerdo (Brand) --- */
+.login-brand {
+    flex: 1;
+    background: var(--vm-color-primary-dark);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+}
+
+.brand-content {
+    max-width: 440px;
+}
+
+.brand-logo {
+    width: 56px;
+    height: 56px;
+    background-color: var(--vm-color-primary);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.brand-content h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.brand-subtitle {
+    font-size: 14px;
+    color: #93c5fd;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.brand-line {
+    width: 40px;
+    height: 4px;
+    background-color: var(--vm-color-accent);
+    margin: 24px 0;
+    border-radius: 2px;
+}
+
+.brand-description {
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.brand-footer {
+    margin-top: 40px;
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* --- Painel Direito (Formulário) --- */
+.login-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background-color: #ffffff;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.mobile-logo {
+    display: none;
+    width: 48px;
+    height: 48px;
+    background-color: var(--vm-color-primary);
+    color: #ffffff;
+    font-weight: 800;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.login-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.login-header p {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 6px;
+    margin-bottom: 32px;
+}
+
+/* Campos e Formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.password-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-label a {
+    font-size: 12px;
+    color: var(--vm-color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.password-label a:hover {
+    text-decoration: underline;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper input {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 40px;
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    font-size: 15px;
+    color: var(--vm-color-text);
+    outline: none;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--vm-color-accent);
+    outline: 2px solid var(--vm-color-focus);
+    outline-offset: 1px;
+    box-shadow: none;
+}
+
+.password-toggle {
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle:hover {
+    color: #475569;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+/* Opções e Botão */
+.login-options {
+    margin-bottom: 24px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: var(--vm-space-2);
+    min-height: 40px;
+    font-size: 13px;
+    color: var(--vm-color-text-secondary);
+    cursor: pointer;
+}
+
+.remember input {
+    width: 18px;
+    height: 18px;
+}
+
+.login-button {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 var(--vm-space-4);
+    background-color: var(--vm-color-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--vm-radius-sm);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--vm-space-2);
+}
+
+.login-button:hover {
+    background-color: var(--vm-color-primary-dark);
+}
+
+/* Mensagens e Erros */
+.login-error, .messages {
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.login-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.login-error strong {
+    display: block;
+}
+
+/* Rodapé */
+.login-footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.footer-separator {
+    margin: 0 4px;
+}
+
+/* Responsividade */
+@media (max-width: 1023px) {
+    .login-page {
+        flex-direction: column;
+    }
+
+    .login-brand {
+        display: none;
+    }
+
+    .mobile-logo {
+        display: flex;
+    }
+}

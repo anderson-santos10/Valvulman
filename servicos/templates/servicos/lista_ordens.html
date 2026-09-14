@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ordens de serviço | Valvulman{% endblock %}
+{% block page_heading %}Ordens de serviço{% endblock %}
+{% block breadcrumb %}Operação{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Ordens de serviço</h1>
+            <p>Do recebimento à entrega. Manômetros e válvulas na mesma ordem.</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:fila_ordens' %}" class="btn-acao visualizar">Fila operacional</a>
+            <a href="{% url 'servicos:cadastrar_ordem' %}" class="btn-nova-os">+ Nova OS</a>
+        </div>
+    </div>
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar número, cliente, CNPJ, instrumento..." autocomplete="off" aria-label="Pesquisar ordens">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    {% for valor, rotulo in status_choices %}
+                        <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="data_de" value="{{ request.GET.data_de|default:'' }}" aria-label="Data inicial">
+                <input type="date" name="data_ate" value="{{ request.GET.data_ate|default:'' }}" aria-label="Data final">
+                <label>
+                    <input type="checkbox" name="atrasadas" value="1" {% if request.GET.atrasadas %}checked{% endif %}>
+                    Somente atrasadas
+                </label>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>Entrada</th>
+                        <th>Previsão</th>
+                        <th>Entrega</th>
+                        <th>Itens</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ordem in ordens %}
+                    <tr>
+                        <td><strong class="numero-os">{{ ordem.numero }}</strong></td>
+                        <td>{{ ordem.cliente.nome }}</td>
+                        <td>{{ ordem.data_entrada|date:"d/m/Y" }}</td>
+                        <td>{{ ordem.data_previsao_entrega|date:"d/m/Y"|default:"—" }}</td>
+                        <td>{{ ordem.data_entrega|date:"d/m/Y"|default:"—" }}</td>
+                        <td>{{ ordem.total_itens }}</td>
+                        <td>{{ ordem.get_status_display }}{% if ordem.esta_atrasada %} · <span class="os-situacao-atrasada">Atrasada</span>{% endif %}</td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:imprimir_ordem' ordem.pk %}" class="btn-acao imprimir">Imprimir</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma ordem de serviço</h3>
+                                <p>Registre o recebimento dos equipamentos do cliente.</p>
+                                <a href="{% url 'servicos:cadastrar_ordem' %}" class="btn-nova-os">+ Nova OS</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

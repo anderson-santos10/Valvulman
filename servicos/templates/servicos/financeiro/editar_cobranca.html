@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar {{ cobranca.numero }} | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/financeiro.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/financeiro.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>Editar {{ cobranca.numero }}</h1>
+            <p>Somente cobranças pendentes sem pagamento podem ser alteradas.</p>
+        </div>
+        {% include "servicos/financeiro/_form_cobranca.html" with botao_salvar="Salvar alterações" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+.cliente-detalhe .os-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.cliente-detalhe .tabela-wrapper {
+    overflow-x: auto;
+}
+
+@media (max-width: 700px) {
+    .cliente-detalhe .os-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cliente-detalhe .relatorio-detalhe-acoes {
+        width: 100%;
+    }
+
+    .cliente-detalhe .relatorio-detalhe-acoes a {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+    }
+}

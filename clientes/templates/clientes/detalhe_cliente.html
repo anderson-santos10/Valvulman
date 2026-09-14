@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ cliente.nome }} | Valvulman{% endblock %}
+{% block page_heading %}Cliente{% endblock %}
+{% block breadcrumb %}Cadastros / {{ cliente.nome }}{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'clientes/css/detalhe_cliente.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe cliente-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ cliente.nome }}</h1>
+            <p>Cadastro, válvulas, instrumentos, ordens de serviço e relatórios técnicos deste cliente.</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'clientes:lista_clientes' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:lista_valvulas' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver válvulas</a>
+            <a href="{% url 'servicos:lista_instrumentos' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver instrumentos</a>
+            <a href="{% url 'servicos:lista_ordens' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver OS</a>
+            <a href="{% url 'servicos:lista_orcamentos' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver orçamentos</a>
+            {% if perms.servicos.view_cobranca %}
+            <a href="{% url 'servicos:lista_cobrancas' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver cobranças</a>
+            {% endif %}
+            <a href="{% url 'servicos:lista_calibracoes' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver calibrações</a>
+            <a href="{% url 'servicos:lista_certificados' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Ver certificados</a>
+            {% if perms.clientes.change_cliente %}
+            <a href="{% url 'clientes:editar_cliente' cliente.pk %}" class="btn-nova-os">Editar cliente</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="os-resumo">
+        <div class="resumo-card">
+            <span class="resumo-label">Válvulas ativas</span>
+            <strong class="resumo-valor">{{ total_valvulas_ativas }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Válvulas inativas</span>
+            <strong class="resumo-valor">{{ total_valvulas_inativas }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Total de válvulas</span>
+            <strong class="resumo-valor">{{ total_valvulas }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Relatórios técnicos</span>
+            <strong class="resumo-valor">{{ relatorios|length }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Instrumentos ativos</span>
+            <strong class="resumo-valor">{{ total_instrumentos_ativos }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Instrumentos inativos</span>
+            <strong class="resumo-valor">{{ total_instrumentos_inativos }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Total de instrumentos</span>
+            <strong class="resumo-valor">{{ total_instrumentos }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Ordens de serviço</span>
+            <strong class="resumo-valor">{{ ordens|length }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Calibrações</span>
+            <strong class="resumo-valor">{{ total_calibracoes }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Certificados</span>
+            <strong class="resumo-valor">{{ total_certificados }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Orçamentos</span>
+            <strong class="resumo-valor">{{ orcamentos|length }}</strong>
+        </div>
+        {% if financeiro %}
+        <div class="resumo-card">
+            <span class="resumo-label">Total em aberto</span>
+            <strong class="resumo-valor">R$ {{ financeiro.total_em_aberto|floatformat:2 }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Total vencido</span>
+            <strong class="resumo-valor">R$ {{ financeiro.total_vencido|floatformat:2 }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Total pago</span>
+            <strong class="resumo-valor">R$ {{ financeiro.total_pago|floatformat:2 }}</strong>
+        </div>
+        {% endif %}
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Dados cadastrais</h2>
+                <span>Informações registradas no cadastro do cliente</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Nome</span>
+                <strong>{{ cliente.nome }}</strong>
+            </div>
+            <div>
+                <span class="detalhe-label">CNPJ</span>
+                <span>{{ cliente.cnpj }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">CEP</span>
+                <span>{{ cliente.cep }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Endereço</span>
+                <span>{{ cliente.endereco }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Contato</span>
+                <span>{{ cliente.contato_principal|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Telefone</span>
+                <span>{{ cliente.telefone|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">E-mail</span>
+                <span>{{ cliente.email|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Cadastrado em</span>
+                <span>{{ cliente.criado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Válvulas ativas</h2>
+                <span>{{ total_valvulas_ativas }} equipamento{{ total_valvulas_ativas|pluralize }} em operação no cadastro</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_valvula' %}?cliente={{ cliente.pk }}" class="btn-nova-os">Nova válvula</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>TAG</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valvula in valvulas_ativas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ valvula.codigo }}</strong></td>
+                        <td>{{ valvula.tag|default:"—" }}</td>
+                        <td>{{ valvula.fabricante|default:"—" }}</td>
+                        <td>{{ valvula.modelo|default:"—" }}</td>
+                        <td>{{ valvula.numero_serie|default:"—" }}</td>
+                        <td><span class="vm-badge vm-badge--success">Ativa</span></td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_valvula' valvula.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma válvula ativa</h3>
+                                <p>Cadastre uma válvula de segurança para este cliente.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Válvulas inativas</h2>
+                <span>Cadastros preservados, fora de uso operacional</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>TAG</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valvula in valvulas_inativas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ valvula.codigo }}</strong></td>
+                        <td>{{ valvula.tag|default:"—" }}</td>
+                        <td>{{ valvula.fabricante|default:"—" }}</td>
+                        <td>{{ valvula.modelo|default:"—" }}</td>
+                        <td>{{ valvula.numero_serie|default:"—" }}</td>
+                        <td><span class="vm-badge vm-badge--danger">Inativa</span></td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_valvula' valvula.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma válvula inativa</h3>
+                                <p>Inativações aparecem aqui sem apagar o cadastro.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Instrumentos ativos</h2>
+                <span>{{ total_instrumentos_ativos }} instrumento{{ total_instrumentos_ativos|pluralize }} em operação no cadastro</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_instrumento' %}?cliente={{ cliente.pk }}" class="btn-nova-os">Novo instrumento</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Tipo</th>
+                        <th>TAG</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Faixa</th>
+                        <th>Calibrações</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instrumento in instrumentos_ativos %}
+                    <tr>
+                        <td><strong class="numero-os">{{ instrumento.codigo }}</strong></td>
+                        <td>{{ instrumento.get_tipo_display }}</td>
+                        <td>{{ instrumento.tag|default:"—" }}</td>
+                        <td>{{ instrumento.fabricante|default:"—" }}</td>
+                        <td>{{ instrumento.modelo|default:"—" }}</td>
+                        <td>{{ instrumento.numero_serie|default:"—" }}</td>
+                        <td>{{ instrumento.faixa_formatada|default:"—" }}</td>
+                        <td>{{ instrumento.total_calibracoes }}</td>
+                        <td><span class="vm-badge vm-badge--success">Ativo</span></td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_instrumento' instrumento.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum instrumento ativo</h3>
+                                <p>Cadastre um instrumento de medição para este cliente.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Instrumentos inativos</h2>
+                <span>{{ total_instrumentos_inativos }} cadastro{{ total_instrumentos_inativos|pluralize }} preservado{{ total_instrumentos_inativos|pluralize }}, fora de uso operacional</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Tipo</th>
+                        <th>TAG</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Faixa</th>
+                        <th>Calibrações</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instrumento in instrumentos_inativos %}
+                    <tr>
+                        <td><strong class="numero-os">{{ instrumento.codigo }}</strong></td>
+                        <td>{{ instrumento.get_tipo_display }}</td>
+                        <td>{{ instrumento.tag|default:"—" }}</td>
+                        <td>{{ instrumento.fabricante|default:"—" }}</td>
+                        <td>{{ instrumento.modelo|default:"—" }}</td>
+                        <td>{{ instrumento.numero_serie|default:"—" }}</td>
+                        <td>{{ instrumento.faixa_formatada|default:"—" }}</td>
+                        <td>{{ instrumento.total_calibracoes }}</td>
+                        <td><span class="vm-badge vm-badge--danger">Inativo</span></td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_instrumento' instrumento.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum instrumento inativo</h3>
+                                <p>Inativações aparecem aqui sem apagar o cadastro.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Orçamentos</h2>
+                <span>{{ orcamentos|length }} proposta{{ orcamentos|length|pluralize }} comercial{{ orcamentos|length|pluralize }} deste cliente</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_orcamento' %}?cliente={{ cliente.pk }}" class="btn-nova-os">Novo orçamento</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Emissão</th>
+                        <th>Validade</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>OS</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orcamento in orcamentos %}
+                    <tr>
+                        <td><strong class="numero-os">{{ orcamento.numero }}</strong></td>
+                        <td>{{ orcamento.data_emissao|date:"d/m/Y" }}</td>
+                        <td>{{ orcamento.data_validade|date:"d/m/Y"|default:"—" }}</td>
+                        <td>{{ orcamento.get_status_display }}</td>
+                        <td>R$ {{ orcamento.total_geral|floatformat:2 }}</td>
+                        <td>
+                            {% with os=orcamento.ordens_servico.all|first %}
+                                {% if os %}{{ os.numero }}{% else %}—{% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_orcamento' orcamento.pk %}" class="btn-acao visualizar">Ver orçamento</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum orçamento</h3>
+                                <p>As propostas comerciais deste cliente aparecerão aqui.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Ordens de serviço</h2>
+                <span>{{ ordens|length }} ordem{{ ordens|length|pluralize }} operacional{{ ordens|length|pluralize }} deste cliente</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_ordem' %}?cliente={{ cliente.pk }}" class="btn-nova-os">Nova OS</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Entrada</th>
+                        <th>Previsão</th>
+                        <th>Entrega</th>
+                        <th>Itens</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ordem in ordens %}
+                    <tr>
+                        <td><strong class="numero-os">{{ ordem.numero }}</strong></td>
+                        <td>{{ ordem.data_entrada|date:"d/m/Y" }}</td>
+                        <td>{{ ordem.data_previsao_entrega|date:"d/m/Y"|default:"—" }}</td>
+                        <td>{{ ordem.data_entrega|date:"d/m/Y"|default:"—" }}</td>
+                        <td>{{ ordem.total_itens }}</td>
+                        <td>{{ ordem.get_status_display }}</td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma ordem de serviço</h3>
+                                <p>Registre a entrada de instrumentos deste cliente no laboratório.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {% if financeiro %}
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Financeiro</h2>
+                <span>Contas a receber deste cliente</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_cobranca' %}?cliente={{ cliente.pk }}" class="btn-acao visualizar">Nova cobrança</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                        <th>Saldo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobranca in cobrancas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ cobranca.numero }}</strong></td>
+                        <td>{{ cobranca.data_vencimento|date:"d/m/Y" }}</td>
+                        <td>R$ {{ cobranca.valor_final|floatformat:2 }}</td>
+                        <td>R$ {{ cobranca.saldo_agg|floatformat:2 }}</td>
+                        <td>{{ cobranca.situacao_rotulo }}</td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_cobranca' cobranca.pk %}" class="btn-acao visualizar">Ver cobrança</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma cobrança</h3>
+                                <p>As cobranças deste cliente aparecerão nesta lista.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Relatórios técnicos</h2>
+                <span>Serviços já registrados para este cliente</span>
+            </div>
+            <a href="{% url 'servicos:relatorio_tecnico' %}" class="btn-acao visualizar">Novo relatório</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Data</th>
+                        <th>Válvulas</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for relatorio in relatorios %}
+                    <tr>
+                        <td>
+                            <strong class="numero-os">
+                                {% if relatorio.numero_relatorio %}
+                                    {{ relatorio.numero_relatorio }}
+                                {% else %}
+                                    #{{ relatorio.pk }}
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td>
+                            {% if relatorio.data %}
+                                {{ relatorio.data|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% with total=relatorio.valvulas.all|length %}
+                                {{ total }}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_relatorio' relatorio.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:editar_relatorio' relatorio.pk %}" class="btn-acao editar">Editar</a>
+                                <a href="{% url 'servicos:imprimir_relatorio' relatorio.pk %}" class="btn-acao imprimir">Imprimir</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum relatório técnico</h3>
+                                <p>Os relatórios deste cliente aparecerão nesta lista.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

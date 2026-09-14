@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Clientes | Valvulman{% endblock %}
+{% block page_heading %}Clientes{% endblock %}
+{% block breadcrumb %}Cadastros{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'clientes/css/lista_clientes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="clientes-page">
+    <!-- CABEÇALHO -->
+    <div class="clientes-page-header">
+        <div class="clientes-header-info">
+            <div class="clientes-header-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+            <div>
+                <h1>Clientes</h1>
+                <p>Consulte e gerencie os clientes cadastrados no sistema.</p>
+            </div>
+        </div>
+
+        <!-- BOTÃO NOVO CLIENTE -->
+        {% if perms.clientes.add_cliente %}
+        <a href="{% url 'clientes:cadastrar_cliente' %}" class="btn-novo-cliente">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Novo Cliente
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- CARD PRINCIPAL -->
+    <div class="clientes-card">
+        <!-- BARRA SUPERIOR -->
+        <div class="clientes-card-toolbar">
+           
+            <!-- PESQUISA -->
+            <form method="get" class="clientes-search">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="search" id="clienteSearch" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Pesquisar cliente..." autocomplete="off">
+            </form>
+        </div>
+
+        {% if clientes %}
+            <!-- TABELA -->
+            <div class="clientes-table-wrapper">
+                <table class="clientes-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>CNPJ</th>
+                            <th>Telefone</th>
+                            <th>CEP</th>
+                            <th>Endereço</th>
+                            <th class="col-acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTableBody">
+                        {% for cliente in clientes %}
+                            <tr class="cliente-row">
+                                <!-- CLIENTE (CLICÁVEL) -->
+                                <td>
+                                    <a href="{% url 'clientes:detalhe_cliente' cliente.pk %}" class="cliente-info-link">
+                                        <div class="cliente-info">
+                                            <div class="cliente-avatar">
+                                                {{ cliente.nome|first|upper }}
+                                            </div>
+                                            <div class="cliente-name">
+                                                {{ cliente.nome }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+
+                                <!-- CNPJ -->
+                                <td>
+                                    {% if cliente.cnpj %}
+                                        <span class="cliente-documento">{{ cliente.cnpj }}</span>
+                                    {% else %}
+                                        <span class="campo-vazio">Não informado</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if cliente.telefone %}
+                                        {{ cliente.telefone }}
+                                    {% else %}
+                                        <span class="campo-vazio">Não informado</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- CEP -->
+                                <td>
+                                    {% if cliente.cep %}
+                                        {{ cliente.cep }}
+                                    {% else %}
+                                        <span class="campo-vazio">Não informado</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- ENDEREÇO -->
+                                <td>
+                                    {% if cliente.endereco %}
+                                        <span class="cliente-endereco">{{ cliente.endereco }}</span>
+                                    {% else %}
+                                        <span class="campo-vazio">Não informado</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- AÇÕES -->
+                                <td class="col-acoes">
+                                    <div class="cliente-acoes">
+                                        <a href="{% url 'servicos:lista_valvulas' %}?cliente={{ cliente.pk }}" class="acao-button acao-editar" title="Válvulas do cliente" aria-label="Válvulas de {{ cliente.nome }}">
+                                            Válvulas
+                                        </a>
+                                        <a href="{% url 'clientes:editar_cliente' cliente.pk %}" class="acao-button acao-editar" title="Editar cliente" aria-label="Editar {{ cliente.nome }}">
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINAÇÃO MELHORADA -->
+            {% if is_paginated %}
+                <div class="clientes-pagination">
+                    <!-- INFORMAÇÃO -->
+                    <div class="pagination-info">
+                        Mostrando <strong>{{ page_obj.start_index }}</strong> até <strong>{{ page_obj.end_index }}</strong> de <strong>{{ paginator.count }}</strong> clientes
+                    </div>
+
+                    <!-- CONTROLES -->
+                    <div class="pagination-controls">
+                        <!-- PRIMEIRA PÁGINA -->
+                        {% if page_obj.has_previous %}
+                            <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page=1" class="pagination-button" title="Primeira página">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="11 17 6 12 11 7"/>
+                                    <polyline points="18 17 13 12 18 7"/>
+                                </svg>
+                            </a>
+                            <!-- ANTERIOR -->
+                            <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="pagination-button" title="Página anterior">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                                Anterior
+                            </a>
+                        {% else %}
+                            <span class="pagination-button disabled" title="Primeira página">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="11 17 6 12 11 7"/>
+                                    <polyline points="18 17 13 12 18 7"/>
+                                </svg>
+                            </span>
+                            <span class="pagination-button disabled">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                                Anterior
+                            </span>
+                        {% endif %}
+
+                        <!-- NÚMEROS DAS PÁGINAS INTELIGENTES -->
+                        <div class="pagination-pages">
+                            {% for num in paginator.page_range %}
+                                {% if num == page_obj.number %}
+                                    <span class="pagination-page active">{{ num }}</span>
+                                {% elif num == 1 %}
+                                    <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page=1" class="pagination-page">1</a>
+                                    {% if page_obj.number > 4 %}
+                                        <span class="pagination-ellipsis">&hellip;</span>
+                                    {% endif %}
+                                {% elif num == paginator.num_pages %}
+                                    {% if page_obj.number < paginator.num_pages|add:"-3" %}
+                                        <span class="pagination-ellipsis">&hellip;</span>
+                                    {% endif %}
+                                    <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ paginator.num_pages }}" class="pagination-page">{{ paginator.num_pages }}</a>
+                                {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                                    <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ num }}" class="pagination-page">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- PRÓXIMA -->
+                        {% if page_obj.has_next %}
+                            <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="pagination-button" title="Próxima página">
+                                Próxima
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </a>
+                            <!-- ÚLTIMA PÁGINA -->
+                            <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}page={{ paginator.num_pages }}" class="pagination-button" title="Última página">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="13 17 18 12 13 7"/>
+                                    <polyline points="6 17 11 12 6 7"/>
+                                </svg>
+                            </a>
+                        {% else %}
+                            <span class="pagination-button disabled">
+                                Próxima
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                            <span class="pagination-button disabled" title="Última página">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="13 17 18 12 13 7"/>
+                                    <polyline points="6 17 11 12 6 7"/>
+                                </svg>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <!-- ESTADO VAZIO -->
+            <div class="clientes-empty">
+                <div class="clientes-empty-icon">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+
+                {% if request.GET.q %}
+                    <h2>Nenhum cliente encontrado</h2>
+                    <p>Nenhum cliente corresponde à pesquisa "{{ request.GET.q }}".</p>
+                    <a href="{% url 'clientes:lista_clientes' %}" class="btn-empty">
+                        Limpar pesquisa
+                    </a>
+                {% else %}
+                    <h2>Nenhum cliente cadastrado</h2>
+                    <p>Ainda não existem clientes cadastrados no sistema.</p>
+                    <a href="{% url 'clientes:cadastrar_cliente' %}" class="btn-empty">
+                        Cadastrar primeiro cliente
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'clientes/js/lista_clientes.js' %}"></script>
+{% endblock %}

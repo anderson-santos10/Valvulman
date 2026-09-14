@@ -1,0 +1,238 @@
+/* Padrões compartilhados de páginas autenticadas (não é o Design System). */
+
+.os-container,
+.clientes-page,
+.dashboard-home,
+.acesso-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cliente-page,
+.cadastro-cliente-page {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cadastro-cliente-card {
+    width: 100%;
+    background: var(--vm-color-surface);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-md);
+    box-shadow: var(--vm-shadow-sm);
+    overflow: hidden;
+}
+
+.cadastro-cliente-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vm-space-1);
+    padding: var(--vm-space-5) var(--vm-space-6) 0;
+}
+
+.cadastro-cliente-header h1 {
+    margin: 0;
+    font-size: 26px;
+    line-height: 34px;
+    color: var(--vm-color-primary-dark);
+}
+
+.cadastro-cliente-header p {
+    margin: 0 0 var(--vm-space-4);
+    color: var(--vm-color-text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.os-header,
+.clientes-page-header,
+.cliente-page-header,
+.dashboard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--vm-space-4);
+    margin-bottom: var(--vm-space-6);
+}
+
+.os-header h1,
+.clientes-page-header h1,
+.cliente-page-header h1,
+.dashboard-header h1,
+.cadastro-cliente-header h1 {
+    font-size: 26px;
+    line-height: 34px;
+    color: var(--vm-color-primary-dark);
+}
+
+.os-header p,
+.clientes-page-header p,
+.cliente-page-header p,
+.dashboard-header p {
+    margin: var(--vm-space-1) 0 0;
+    color: var(--vm-color-text-secondary);
+    max-width: 52rem;
+}
+
+.relatorio-detalhe-acoes,
+.form-actions,
+.acoes,
+.fila-card-acoes,
+.cliente-acoes,
+.pontos-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--vm-space-2);
+}
+
+.btn-nova-os,
+.btn-novo-cliente,
+.btn-salvar,
+.login-button {
+    background: var(--vm-color-primary);
+    border-color: var(--vm-color-primary);
+    border-radius: var(--vm-radius-sm);
+    color: #fff;
+}
+
+.btn-nova-os:hover,
+.btn-novo-cliente:hover,
+.btn-salvar:hover {
+    background: var(--vm-color-primary-dark);
+    color: #fff;
+    transform: none;
+}
+
+.btn-acao,
+.btn-cancelar,
+.btn-empty,
+.acao-button {
+    border-radius: var(--vm-radius-sm);
+}
+
+.os-card,
+.clientes-card,
+.resumo-card,
+.dashboard-card,
+.dashboard-metric,
+.cliente-card,
+.fila-coluna {
+    background: var(--vm-color-surface);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-md);
+    box-shadow: var(--vm-shadow-sm);
+}
+
+.dashboard-card:hover,
+.dashboard-metric:hover {
+    border-color: var(--vm-color-accent);
+}
+
+.dashboard-metric.is-alert {
+    border-color: #f0c4c4;
+    background: var(--vm-color-danger-bg);
+}
+
+.resumo-card,
+.dashboard-metric {
+    padding: var(--vm-space-4) var(--vm-space-5);
+}
+
+.resumo-valor,
+.dashboard-metric-value {
+    font-size: 24px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.tabela-wrapper,
+.clientes-table-wrapper,
+.vm-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+.tabela-os,
+.clientes-table {
+    width: 100%;
+}
+
+.col-acoes {
+    width: auto;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.calibracoes-filtros,
+.valvulas-filtros,
+.instrumentos-filtros,
+.clientes-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--vm-space-2);
+}
+
+.detalhe-secao + .detalhe-secao,
+.os-card + .os-card,
+.dashboard-operacao {
+    margin-top: var(--vm-space-6);
+}
+
+.vazio,
+.clientes-empty,
+.vm-empty {
+    padding: var(--vm-space-7) var(--vm-space-6);
+}
+
+/* Escopo: conteúdo autenticado. Login e páginas standalone não usam pages.css. */
+.vm-main input[type="text"],
+.vm-main input[type="search"],
+.vm-main input[type="email"],
+.vm-main input[type="number"],
+.vm-main input[type="date"],
+.vm-main input[type="password"],
+.vm-main select,
+.vm-main textarea {
+    border-color: var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    font-family: inherit;
+}
+
+.vm-main input:focus,
+.vm-main select:focus,
+.vm-main textarea:focus {
+    outline: 2px solid var(--vm-color-focus);
+    outline-offset: 1px;
+    border-color: var(--vm-color-accent);
+}
+
+.numero-os,
+.cliente-info-link {
+    font-family: var(--vm-font-mono);
+}
+
+@media (max-width: 768px) {
+    .os-header,
+    .clientes-page-header,
+    .cliente-page-header,
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .relatorio-detalhe-acoes .btn-nova-os,
+    .relatorio-detalhe-acoes .btn-acao,
+    .btn-nova-os,
+    .btn-novo-cliente {
+        justify-content: center;
+    }
+}

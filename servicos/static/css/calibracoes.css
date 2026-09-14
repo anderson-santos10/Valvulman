@@ -1,0 +1,86 @@
+.calibracoes-filtros,
+.vm-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vm-space-2);
+    align-items: center;
+}
+
+.calibracoes-filtros input,
+.calibracoes-filtros select,
+.vm-filter-bar input,
+.vm-filter-bar select {
+    min-height: 40px;
+    padding: 0 var(--vm-space-3);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    font-size: 14px;
+    color: var(--vm-color-text);
+}
+
+.calibracoes-filtros input[type="search"] {
+    min-width: min(240px, 100%);
+    flex: 1;
+}
+
+.calibracoes-paginacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--vm-space-3);
+    padding: var(--vm-space-4);
+    border-top: 1px solid var(--vm-color-border);
+    color: var(--vm-color-text-secondary);
+    font-size: 13px;
+}
+
+.calibracao-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.calibracao-form .form-help {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.pontos-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.pontos-formset-table input {
+    min-width: 0;
+    width: 100%;
+}
+
+.pontos-formset-table .campo-ordem {
+    max-width: 80px;
+}
+
+.ponto-form-errors {
+    color: #b91c1c;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.ponto-delete {
+    display: none;
+}
+
+.formset-empty-template {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .calibracao-form .form-row,
+    .calibracoes-filtros input[type="search"] {
+        grid-template-columns: 1fr;
+        min-width: 0;
+        width: 100%;
+    }
+}

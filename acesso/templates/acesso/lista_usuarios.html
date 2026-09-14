@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Usuários | Valvulman{% endblock %}
+{% block page_heading %}Usuários{% endblock %}
+{% block breadcrumb %}Acesso{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'acesso/css/acesso.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Usuários</h1>
+            <p>Administração de contas, grupos e status de acesso.</p>
+        </div>
+        {% if perms.auth.add_user %}
+        <a href="{% url 'acesso:cadastrar_usuario' %}" class="btn-nova-os">+ Novo usuário</a>
+        {% endif %}
+    </div>
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Usuário, nome ou e-mail" autocomplete="off">
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Grupos</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td><strong>{{ usuario.username }}</strong></td>
+                        <td>{{ usuario.get_full_name|default:"—" }}</td>
+                        <td>{{ usuario.email|default:"—" }}</td>
+                        <td>
+                            {% for grupo in usuario.groups.all %}
+                                {{ grupo.name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                —
+                            {% endfor %}
+                        </td>
+                        <td>{% if usuario.is_active %}Sim{% else %}Não{% endif %}</td>
+                        <td>
+                            <a href="{% url 'acesso:detalhe_usuario' usuario.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="tabela-vazia">Nenhum usuário encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

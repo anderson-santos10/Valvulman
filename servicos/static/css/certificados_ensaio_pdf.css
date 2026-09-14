@@ -1,0 +1,182 @@
+/* Regras específicas do PDF oficial (Playwright/Chromium).
+   A impressão do navegador continua em @media print no CSS principal. */
+
+@page {
+    size: A4 portrait;
+    margin: 8mm;
+}
+
+html,
+body.ensaio-cert-pdf {
+    background: #fff !important;
+    margin: 0;
+    padding: 0;
+    height: auto;
+}
+
+.ensaio-cert-pdf .ensaio-cert-acoes,
+.ensaio-cert-pdf .no-print {
+    display: none !important;
+}
+
+.ensaio-cert-pdf .ensaio-cert-paper {
+    box-shadow: none;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+.ensaio-cert-pdf .ensaio-cert-header {
+    gap: 10px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-logo,
+.ensaio-cert-pdf .ensaio-cert-qr {
+    width: 40px;
+    height: 40px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-brand strong {
+    font-size: 14px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-brand span {
+    font-size: 9px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-title h1 {
+    font-size: 14px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-title p {
+    margin: 0;
+    font-size: 10px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-qr-box span {
+    font-size: 8px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-section {
+    margin-bottom: 4px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-section h2 {
+    margin: 0 0 2px;
+    padding-bottom: 2px;
+    font-size: 9px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 1px 8px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid .span-2 {
+    grid-column: span 2;
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 4px;
+    min-width: 0;
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid dt {
+    font-size: 8px;
+    margin: 0;
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid dt::after {
+    content: ":";
+}
+
+.ensaio-cert-pdf .ensaio-cert-grid dd {
+    margin: 0;
+    font-size: 10px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-padrao {
+    white-space: pre-line;
+}
+
+.ensaio-cert-pdf .ensaio-cert-table {
+    font-size: 9px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-table th,
+.ensaio-cert-pdf .ensaio-cert-table td {
+    padding: 2px 4px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-table thead {
+    display: table-header-group;
+}
+
+.ensaio-cert-pdf .ensaio-cert-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.ensaio-cert-pdf .ensaio-cert-resumo {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    margin-bottom: 4px;
+    gap: 4px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-resumo div {
+    padding: 4px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-resumo span {
+    font-size: 8px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-resultado {
+    margin: 4px 0;
+    font-size: 12px;
+    padding: 4px;
+    letter-spacing: 0.06em;
+}
+
+.ensaio-cert-pdf .ensaio-cert-obs,
+.ensaio-cert-pdf .ensaio-cert-nota {
+    font-size: 8px;
+    margin: 4px 0;
+}
+
+.ensaio-cert-pdf .ensaio-cert-assinaturas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-assinatura {
+    margin-top: 0;
+}
+
+.ensaio-cert-pdf .ensaio-cert-assinatura .linha {
+    height: 12px;
+    margin-bottom: 2px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-assinatura p {
+    font-size: 8px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-assinatura strong {
+    font-size: 9px;
+}
+
+.ensaio-cert-pdf .ensaio-cert-footer {
+    margin-top: 6px;
+    padding-top: 4px;
+    font-size: 8px;
+}

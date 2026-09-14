@@ -1,0 +1,9 @@
+.os-print-paper table td:nth-child(n+2),
+.os-print-paper table th:nth-child(n+2) {
+    text-align: right;
+}
+
+.os-print-paper table td:first-child,
+.os-print-paper table th:first-child {
+    text-align: left;
+}

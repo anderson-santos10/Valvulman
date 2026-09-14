@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar {{ ordem.numero }} | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cliente-page">
+    <div class="cliente-page-header">
+        <div>
+            <h1>Editar {{ ordem.numero }}</h1>
+            <p>Altere dados operacionais enquanto a ordem não estiver entregue ou cancelada.</p>
+        </div>
+    </div>
+    <div class="cliente-card">
+        {% include "servicos/_form_ordem.html" with botao_salvar="Salvar alterações" %}
+    </div>
+</div>
+{% endblock %}

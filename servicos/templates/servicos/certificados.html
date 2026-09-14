@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatórios técnicos legados - Valvulman{% endblock %}
+{% block page_heading %}Relatórios técnicos legados{% endblock %}
+{% block breadcrumb %}Documentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Relatórios técnicos legados</h1>
+            <p>Consulta histórica dos relatórios de válvula. O certificado de calibração de instrumento está em Documentos → Certificados.</p>
+        </div>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header">
+            <div>
+                <h2>Relatórios técnicos</h2>
+                <span>Não são certificados de calibração</span>
+            </div>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>CLIENTE</th>
+                        <th>DATA</th>
+                        <th>SETOR</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificado in certificados %}
+                    <tr>
+                        <td>
+                            <strong class="numero-os">
+                                {% if certificado.numero_relatorio %}
+                                    {{ certificado.numero_relatorio }}
+                                {% else %}
+                                    #{{ certificado.pk }}
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td>
+                            <div class="cliente-info">
+                                <strong>{{ certificado.cliente.nome }}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            {% if certificado.data %}
+                                {{ certificado.data|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if certificado.setor %}
+                                {{ certificado.setor }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:certificado_calibracao' certificado.pk %}" class="btn-acao visualizar">
+                                    Abrir certificado
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum certificado disponível</h3>
+                                <p>Cadastre um relatório técnico para visualizar o certificado correspondente.</p>
+                                <a href="{% url 'servicos:relatorio_tecnico' %}" class="btn-nova-os">
+                                    Novo relatório técnico
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

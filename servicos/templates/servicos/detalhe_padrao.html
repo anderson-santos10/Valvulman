@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Padrão {{ padrao.codigo }} | Valvulman{% endblock %}
+{% block page_heading %}{{ padrao.codigo }}{% endblock %}
+{% block breadcrumb %}Cadastros / Padrões{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ padrao.codigo }}</h1>
+            <p>{{ padrao.identificacao }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:lista_padroes' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:editar_padrao' padrao.pk %}" class="btn-nova-os">Editar</a>
+            {% if padrao.ativo %}
+                <form method="post" action="{% url 'servicos:inativar_padrao' padrao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Inativar</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Identificação</h2>
+                <span>
+                    {% if padrao.ativo %}
+                        <span class="vm-badge vm-badge--success">Ativo</span>
+                    {% else %}
+                        <span class="vm-badge vm-badge--danger">Inativo</span>
+                    {% endif %}
+                    {% if padrao.situacao_validade == "vencido" %}
+                        <span class="status pendente">{{ padrao.situacao_validade_display }}</span>
+                    {% elif padrao.situacao_validade == "vigente" %}
+                        <span class="vm-badge vm-badge--success">{{ padrao.situacao_validade_display }}</span>
+                    {% else %}
+                        <span class="status pendente">{{ padrao.situacao_validade_display }}</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Código</span>
+                <span>{{ padrao.codigo }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Tipo</span>
+                <span>{{ padrao.tipo|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Identificação</span>
+                <span>{{ padrao.identificacao }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Equipamento</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Fabricante</span>
+                <span>{{ padrao.fabricante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Modelo</span>
+                <span>{{ padrao.modelo|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Número de série</span>
+                <span>{{ padrao.numero_serie|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Metrologia</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Faixa</span>
+                <span>{{ padrao.faixa_formatada|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Unidade</span>
+                <span>{{ padrao.get_unidade_display|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Resolução</span>
+                <span>{{ padrao.resolucao_formatada|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Rastreabilidade</h2>
+                <span>Certificado do próprio padrão, não o certificado emitido para o cliente.</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Certificado do padrão</span>
+                <span>{{ padrao.numero_certificado|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Calibrado em</span>
+                <span>{{ padrao.data_calibracao|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Válido até</span>
+                <span>{{ padrao.data_validade|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    {% if padrao.observacoes %}
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Observações</h2>
+            </div>
+        </div>
+        <p>{{ padrao.observacoes }}</p>
+    </section>
+    {% endif %}
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Histórico de calibrações</h2>
+                <span>Ensaios que utilizaram este padrão.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Calibração</th>
+                        <th>Data</th>
+                        <th>Instrumento</th>
+                        <th>Cliente</th>
+                        <th>Resultado</th>
+                        <th>Certificado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for calibracao in calibracoes %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_calibracao' calibracao.pk %}">
+                                <strong class="numero-os">{{ calibracao.numero }}</strong>
+                            </a>
+                        </td>
+                        <td>{{ calibracao.data_calibracao|date:"d/m/Y" }}</td>
+                        <td>{{ calibracao.instrumento.codigo }}</td>
+                        <td>{{ calibracao.instrumento.cliente.nome }}</td>
+                        <td>{{ calibracao.get_resultado_display }}</td>
+                        <td>
+                            {% if calibracao.certificado_atual %}
+                                <a href="{% url 'servicos:detalhe_certificado' calibracao.certificado_atual.pk %}">
+                                    {{ calibracao.certificado_atual.numero }}
+                                </a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma calibração utilizou este padrão</h3>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

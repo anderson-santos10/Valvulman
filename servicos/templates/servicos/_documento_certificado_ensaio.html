@@ -1,0 +1,250 @@
+{% load static %}
+<article class="ensaio-cert-paper{% if certificado.status == 'cancelado' %} esta-cancelado{% endif %}">
+    {% if certificado.status == "cancelado" %}
+        <div class="ensaio-cert-banner-cancelado">CERTIFICADO CANCELADO</div>
+    {% endif %}
+
+    <header class="ensaio-cert-header">
+        <img class="ensaio-cert-logo" src="{% if certificado_logo_src %}{{ certificado_logo_src }}{% else %}{% static 'img/logo_valvulman.svg' %}{% endif %}" alt="Valvulman" width="40" height="40">
+        <div class="ensaio-cert-brand">
+            <strong>VALVULMAN</strong>
+            <span>Gestão técnica</span>
+        </div>
+        <div class="ensaio-cert-title">
+            <h1>CERTIFICADO DE CALIBRAÇÃO</h1>
+            <p>Nº {{ certificado.numero }}</p>
+        </div>
+        {% if certificado_qr_src %}
+        <div class="ensaio-cert-qr-box">
+            <img class="ensaio-cert-qr" src="{{ certificado_qr_src }}" alt="QR Code de validação" title="{{ url_validacao }}" width="40" height="40">
+            <span>Validar</span>
+        </div>
+        {% endif %}
+    </header>
+
+    <section class="ensaio-cert-section">
+        <h2>Cliente</h2>
+        <dl class="ensaio-cert-grid">
+            <div class="span-2">
+                <dt>Cliente</dt>
+                <dd>{{ cliente.nome }}</dd>
+            </div>
+            <div>
+                <dt>CNPJ</dt>
+                <dd>{{ cliente.cnpj }}</dd>
+            </div>
+            <div>
+                <dt>Contato</dt>
+                <dd>{% firstof cliente.contato_principal cliente.email cliente.telefone "—" %}</dd>
+            </div>
+            <div class="span-2">
+                <dt>Endereço</dt>
+                <dd>{{ cliente.endereco }}</dd>
+            </div>
+            <div>
+                <dt>CEP</dt>
+                <dd>{{ cliente.cep }}</dd>
+            </div>
+            <div>
+                <dt>E-mail</dt>
+                <dd>{{ cliente.email|default:"—" }}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="ensaio-cert-section">
+        <h2>Instrumento</h2>
+        <dl class="ensaio-cert-grid">
+            <div>
+                <dt>Tipo</dt>
+                <dd>{{ instrumento.get_tipo_display }}</dd>
+            </div>
+            <div>
+                <dt>Código</dt>
+                <dd>{{ instrumento.codigo }}</dd>
+            </div>
+            <div>
+                <dt>TAG</dt>
+                <dd>{{ instrumento.tag|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Nº série</dt>
+                <dd>{{ instrumento.numero_serie|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Fabricante</dt>
+                <dd>{{ instrumento.fabricante|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Modelo</dt>
+                <dd>{{ instrumento.modelo|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Faixa</dt>
+                <dd>{{ instrumento.faixa_formatada|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Resolução</dt>
+                <dd>{{ instrumento.resolucao_formatada|default:"—" }}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="ensaio-cert-section">
+        <h2>Calibração</h2>
+        <dl class="ensaio-cert-grid">
+            <div>
+                <dt>Calibração</dt>
+                <dd>{{ calibracao.numero }}</dd>
+            </div>
+            <div>
+                <dt>Data</dt>
+                <dd>{{ calibracao.data_calibracao|date:"d/m/Y" }}</dd>
+            </div>
+            <div>
+                <dt>Procedimento</dt>
+                <dd>{{ calibracao.procedimento|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Intervalo</dt>
+                <dd>{% if calibracao.intervalo_validade_meses %}{{ calibracao.intervalo_validade_meses }} meses{% else %}—{% endif %}</dd>
+            </div>
+            <div>
+                <dt>Validade</dt>
+                <dd>{{ calibracao.data_validade|date:"d/m/Y"|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Próxima calibração</dt>
+                <dd>{{ calibracao.data_proxima_calibracao|date:"d/m/Y"|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Data da execução</dt>
+                <dd>{{ calibracao.executado_em|date:"d/m/Y"|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Unidade</dt>
+                <dd>{{ instrumento.get_unidade_display }}</dd>
+            </div>
+            <div>
+                <dt>Tolerância</dt>
+                <dd>{{ calibracao.tolerancia_formatada|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt>Resultado</dt>
+                <dd>{{ calibracao.get_resultado_display }}</dd>
+            </div>
+            <div class="span-2">
+                <dt>Padrão utilizado</dt>
+                <dd class="ensaio-cert-padrao">{{ calibracao.padrao_utilizado|linebreaksbr|default:"—" }}</dd>
+            </div>
+            <div class="span-2">
+                <dt>Critério de aceitação</dt>
+                <dd>{{ calibracao.criterio_aceitacao|default:"—" }}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="ensaio-cert-section">
+        <h2>Resultados do ensaio</h2>
+        <table class="ensaio-cert-table">
+            <thead>
+                <tr>
+                    <th>Ponto</th>
+                    <th>Referência</th>
+                    <th>Indicação</th>
+                    <th>Erro</th>
+                    <th>Tolerância</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ponto in calibracao.pontos.all %}
+                <tr>
+                    <td>{{ ponto.ordem }}</td>
+                    <td>{{ ponto.valor_referencia_formatado }}</td>
+                    <td>{{ ponto.indicacao_formatada }}</td>
+                    <td>{{ ponto.erro_formatado }}</td>
+                    <td>{{ calibracao.tolerancia_formatada }}</td>
+                    <td>{{ ponto.resultado_avaliacao_display }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">Nenhum ponto registrado nesta calibração.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="ensaio-cert-resumo">
+        <div>
+            <span>Pontos avaliados</span>
+            <strong>{{ resumo.avaliados }}</strong>
+        </div>
+        <div>
+            <span>Aprovados</span>
+            <strong>{{ resumo.aprovados }}</strong>
+        </div>
+        <div>
+            <span>Reprovados</span>
+            <strong>{{ resumo.reprovados }}</strong>
+        </div>
+        <div>
+            <span>Maior erro absoluto</span>
+            <strong>{{ resumo.maior_erro_absoluto_formatado|default:"—" }}</strong>
+        </div>
+    </section>
+
+    <div class="ensaio-cert-resultado{% if calibracao.resultado == 'reprovado' %} reprovado{% endif %}">
+        RESULTADO: {{ calibracao.get_resultado_display|upper }}
+    </div>
+
+    {% if calibracao.observacoes %}
+    <section class="ensaio-cert-section">
+        <h2>Observações da calibração</h2>
+        <p class="ensaio-cert-obs">{{ calibracao.observacoes }}</p>
+    </section>
+    {% endif %}
+
+    {% if instrumento.observacoes %}
+    <section class="ensaio-cert-section">
+        <h2>Observações do instrumento</h2>
+        <p class="ensaio-cert-obs">{{ instrumento.observacoes }}</p>
+    </section>
+    {% endif %}
+
+    <p class="ensaio-cert-nota">
+        O resultado apresentado neste certificado corresponde aos dados registrados
+        na calibração e ao critério de aceitação informado para o ensaio.
+        Este documento não afirma conformidade a norma, acreditação ou regulamento
+        que não tenha sido informado no critério da calibração.
+    </p>
+
+    <div class="ensaio-cert-assinaturas">
+        <div class="ensaio-cert-assinatura">
+            <div class="linha"></div>
+            <p>Responsável pela execução</p>
+            <strong>{{ calibracao.executor_nome|default:"—" }}</strong>
+        </div>
+        <div class="ensaio-cert-assinatura">
+            <div class="linha"></div>
+            <p>Data da execução</p>
+            <strong>{{ calibracao.executado_em|date:"d/m/Y"|default:"—" }}</strong>
+        </div>
+        <div class="ensaio-cert-assinatura">
+            <div class="linha"></div>
+            <p>Responsável pela revisão</p>
+            <strong>{{ calibracao.revisor_nome|default:"—" }}</strong>
+        </div>
+        <div class="ensaio-cert-assinatura">
+            <div class="linha"></div>
+            <p>Data da revisão</p>
+            <strong>{{ calibracao.revisado_em|date:"d/m/Y"|default:"—" }}</strong>
+        </div>
+    </div>
+
+    <footer class="ensaio-cert-footer">
+        Emitido em {{ certificado.emitido_em|date:"d/m/Y H:i" }}
+        · Status: {{ certificado.get_status_display }}
+    </footer>
+</article>

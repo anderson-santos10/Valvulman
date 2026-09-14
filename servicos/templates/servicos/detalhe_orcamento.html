@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ orcamento.numero }} | Valvulman{% endblock %}
+{% block page_heading %}{{ orcamento.numero }}{% endblock %}
+{% block breadcrumb %}Comercial / Orçamentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/orcamentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ orcamento.numero }}</h1>
+            <p>{{ orcamento.cliente_nome_exibicao }} — {{ orcamento.get_status_display }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:lista_orcamentos' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:imprimir_orcamento' orcamento.pk %}" class="btn-acao imprimir">Imprimir</a>
+            {% if orcamento.pode_editar %}
+                <a href="{% url 'servicos:editar_orcamento' orcamento.pk %}" class="btn-nova-os">Editar</a>
+            {% endif %}
+            {% if orcamento.pode_enviar %}
+                <form method="post" action="{% url 'servicos:enviar_orcamento' orcamento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao visualizar">Enviar orçamento</button>
+                </form>
+            {% endif %}
+            {% if orcamento.pode_aprovar %}
+                <form method="post" action="{% url 'servicos:aprovar_orcamento' orcamento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Aprovar</button>
+                </form>
+            {% endif %}
+            {% if orcamento.pode_recusar %}
+                <form method="post" action="{% url 'servicos:recusar_orcamento' orcamento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Recusar</button>
+                </form>
+            {% endif %}
+            {% if orcamento.pode_cancelar %}
+                <form method="post" action="{% url 'servicos:cancelar_orcamento' orcamento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Cancelar</button>
+                </form>
+            {% endif %}
+            {% if orcamento.pode_gerar_os %}
+                <form method="post" action="{% url 'servicos:gerar_os_orcamento' orcamento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Gerar OS</button>
+                </form>
+            {% elif orcamento.ordem_gerada %}
+                <a href="{% url 'servicos:detalhe_ordem' orcamento.ordem_gerada.pk %}" class="btn-nova-os">Ver OS</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Orçamento / proposta comercial</h2>
+                <span class="status {% if orcamento.status == 'aprovado' %}aprovado{% else %}pendente{% endif %}">{{ orcamento.get_status_display }}</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' orcamento.cliente_id %}">{{ orcamento.cliente_nome_exibicao }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Documento</span>
+                <span>{{ orcamento.cliente_documento_exibicao }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Emissão</span>
+                <span>{{ orcamento.data_emissao|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Validade</span>
+                <span>{{ orcamento.data_validade|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Hoje</span>
+                <span>{{ hoje|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Situação do prazo</span>
+                <span class="{% if situacao_prazo_codigo == 'expirado' %}os-situacao-atrasada{% endif %}">{{ situacao_prazo_rotulo|upper }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Ordem de serviço</span>
+                {% if ordem_gerada %}
+                    <strong>OS já gerada: <a href="{% url 'servicos:detalhe_ordem' ordem_gerada.pk %}">{{ ordem_gerada.numero }}</a></strong>
+                {% else %}
+                    <span>—</span>
+                {% endif %}
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Endereço (snapshot)</span>
+                <span>{{ orcamento.cliente_endereco_exibicao|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Condições comerciais</span>
+                <span>{{ orcamento.condicoes_comerciais|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ orcamento.observacoes|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Itens</h2>
+                <span>Valores calculados no servidor. Total do item = quantidade × valor unitário − desconto.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>Equipamento</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor unit.</th>
+                        <th>Desconto</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in orcamento.itens.all %}
+                    <tr>
+                        <td>{{ item.get_servico_display }}</td>
+                        <td>
+                            {% if item.instrumento_id %}
+                                <a href="{% url 'servicos:detalhe_instrumento' item.instrumento_id %}">{{ item.codigo_equipamento_exibicao }}</a>
+                            {% elif item.valvula_id %}
+                                <a href="{% url 'servicos:detalhe_valvula' item.valvula_id %}">{{ item.codigo_equipamento_exibicao }}</a>
+                            {% else %}
+                                {{ item.codigo_equipamento_exibicao|default:"—" }}
+                            {% endif %}
+                        </td>
+                        <td>{{ item.descricao }}</td>
+                        <td>{{ item.quantidade }}</td>
+                        <td>R$ {{ item.valor_unitario|floatformat:2 }}</td>
+                        <td>R$ {{ item.desconto|floatformat:2 }}</td>
+                        <td>R$ {{ item.total|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">Nenhum item neste orçamento.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="orcamento-totais">
+            <p>Subtotal: <strong>R$ {{ totais.subtotal|floatformat:2 }}</strong></p>
+            <p>Desconto: <strong>R$ {{ totais.desconto|floatformat:2 }}</strong></p>
+            <p>Total: <strong>R$ {{ totais.total|floatformat:2 }}</strong></p>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Financeiro</h2>
+                <span>Cobranças relacionadas a este orçamento</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Cobrança</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobranca in cobrancas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ cobranca.numero }}</strong></td>
+                        <td>R$ {{ cobranca.valor_final|floatformat:2 }}</td>
+                        <td>{{ cobranca.situacao_rotulo }}</td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_cobranca' cobranca.pk %}" class="btn-acao visualizar">Ver cobrança</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">Nenhuma cobrança vinculada a este orçamento.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

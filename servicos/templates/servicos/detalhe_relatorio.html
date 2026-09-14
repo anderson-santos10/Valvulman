@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatório {{ relatorio.numero_relatorio|default:relatorio.pk }} | Valvulman{% endblock %}
+{% block page_heading %}Relatório técnico{% endblock %}
+{% block breadcrumb %}Operação / Relatórios{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>
+                Relatório
+                {% if relatorio.numero_relatorio %}
+                    {{ relatorio.numero_relatorio }}
+                {% else %}
+                    #{{ relatorio.pk }}
+                {% endif %}
+            </h1>
+            <p>Consulta dos dados cadastrados neste relatório técnico.</p>
+        </div>
+
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:ordens_servico' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:editar_relatorio' relatorio.pk %}" class="btn-nova-os">Editar</a>
+            <a href="{% url 'servicos:imprimir_relatorio' relatorio.pk %}" class="btn-acao imprimir">Imprimir</a>
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Cliente</h2>
+                <span>Dados da empresa vinculada ao relatório</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' cliente.pk %}">{{ cliente.nome }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">CNPJ</span>
+                <span>{{ cliente.cnpj|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">CEP</span>
+                <span>{{ cliente.cep|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Endereço</span>
+                <span>{{ cliente.endereco|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Relatório</h2>
+                <span>Identificação e dados registrados</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Número</span>
+                <span>{{ relatorio.numero_relatorio|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Folha</span>
+                <span>{{ relatorio.folha|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Item</span>
+                <span>{{ relatorio.item|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Setor</span>
+                <span>{{ relatorio.setor|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Data</span>
+                <span>{% if relatorio.data %}{{ relatorio.data|date:"d/m/Y" }}{% else %}—{% endif %}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Prazo de entrega</span>
+                <span>{% if relatorio.prazo_entrega %}{{ relatorio.prazo_entrega|date:"d/m/Y" }}{% else %}—{% endif %}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Data de aprovação</span>
+                <span>{% if relatorio.data_aprovacao %}{{ relatorio.data_aprovacao|date:"d/m/Y" }}{% else %}—{% endif %}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Criado em</span>
+                <span>{{ relatorio.criado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Atualizado em</span>
+                <span>{{ relatorio.atualizado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="detalhe-bloco">
+            <span class="detalhe-label">Motivo do relatório</span>
+            <p>
+                {% if motivos_relatorio %}
+                    {{ motivos_relatorio|join:"; " }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="detalhe-bloco">
+            <span class="detalhe-label">Motivo principal da reforma</span>
+            <p>
+                {% if motivos_reforma %}
+                    {{ motivos_reforma|join:"; " }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="detalhe-bloco">
+            <span class="detalhe-label">Observações</span>
+            <p class="detalhe-observacoes">{{ relatorio.observacoes|default:"—"|linebreaksbr }}</p>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Válvulas</h2>
+                <span>Itens associados a este relatório</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Cadastro</th>
+                        <th>Nº série</th>
+                        <th>TAG</th>
+                        <th>Diâmetro</th>
+                        <th>Modelo</th>
+                        <th>Fabricante</th>
+                        <th>Pressão</th>
+                        <th>Serviço</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valvula in valvulas %}
+                    <tr>
+                        <td>{{ valvula.item }}</td>
+                        <td>
+                            {% if valvula.valvula_id %}
+                                <a href="{% url 'servicos:detalhe_valvula' valvula.valvula_id %}">{{ valvula.valvula.codigo }}</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>{{ valvula.numero_serie|default:"—" }}</td>
+                        <td>{{ valvula.tag|default:"—" }}</td>
+                        <td>{{ valvula.diametro|default:"—" }}</td>
+                        <td>{{ valvula.modelo|default:"—" }}</td>
+                        <td>{{ valvula.fabricante|default:"—" }}</td>
+                        <td>{{ valvula.pressao_psi|default:"—" }}</td>
+                        <td>{{ valvula.servico|default:"—" }}</td>
+                        <td>{{ valvula.observacao|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma válvula neste relatório</h3>
+                                <p>Os itens podem ser incluídos na edição do relatório.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

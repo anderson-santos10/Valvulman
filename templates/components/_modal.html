@@ -1,0 +1,12 @@
+<div class="vm-modal" id="{{ modal_id }}" hidden>
+    <div class="vm-overlay" data-vm-close></div>
+    <div class="vm-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ modal_id }}-title">
+        <div class="vm-modal__header">
+            <h2 id="{{ modal_id }}-title">{{ title }}</h2>
+        </div>
+        <div class="vm-modal__body">{{ body }}</div>
+        <div class="vm-modal__footer">
+            <button type="button" class="vm-btn vm-btn--ghost" data-vm-close>Fechar</button>
+        </div>
+    </div>
+</div>

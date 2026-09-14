@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Login | Valvulman{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+
+<div class="login-page">
+
+    <!-- PAINEL ESQUERDO -->
+    <section class="login-brand">
+        <div class="brand-content">
+            <div class="brand-logo">VM</div>
+            <h1>VALVULMAN</h1>
+            <p class="brand-subtitle">GESTÃO TÉCNICA</p>
+            <div class="brand-line"></div>
+            <p class="brand-description">
+                Sistema de Gestão de Serviços, Assistência Técnica e Controle de Válvulas de Segurança.
+            </p>
+            <div class="brand-footer">
+                <span>ENGENHARIA</span>
+                <span>•</span>
+                <span>ASSISTÊNCIA TÉCNICA</span>
+                <span>•</span>
+                <span>CALIBRAÇÃO</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAINEL DE LOGIN -->
+    <section class="login-panel">
+        <div class="login-container">
+            
+            <div class="login-header">
+                <div class="mobile-logo">VM</div>
+                <h2>Acesso ao Sistema</h2>
+                <p>Entre com suas credenciais para continuar.</p>
+            </div>
+
+            <!-- MENSAGENS DO DJANGO -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="vm-alert vm-alert--{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %}" role="status">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="vm-alert vm-alert--danger login-error" role="alert">
+                    <strong>Não foi possível entrar.</strong>
+                    <span>Verifique seu usuário e senha.</span>
+                </div>
+            {% endif %}
+
+            <!-- FORMULÁRIO -->
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                <!-- USUÁRIO -->
+                <div class="form-group">
+                    <label for="id_username">Usuário</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="username" id="id_username" placeholder="Digite seu usuário" autocomplete="username" autofocus required>
+                    </div>
+                </div>
+
+                <!-- SENHA -->
+                <div class="form-group">
+                    <label for="id_password">Senha</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </span>
+                        <input type="password" name="password" id="id_password" placeholder="Digite sua senha" autocomplete="current-password" required>
+                        
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar senha">
+                            <svg id="eyeOpen" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="eyeClosed" class="is-hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.8 21.8 0 0 1 5.06-5.94"/>
+                                <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-3.06 4.94"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LEMBRAR -->
+                <div class="login-options">
+                    <label class="remember">
+                        <input type="checkbox" name="remember">
+                        <span>Lembrar-me</span>
+                    </label>
+                </div>
+
+                <!-- BOTÃO -->
+                <button type="submit" class="vm-btn vm-btn-primary login-button">
+                    <span>Entrar no Sistema</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- RODAPÉ -->
+            <div class="login-footer">
+                <span>VALVULMAN</span>
+                <span class="footer-separator">|</span>
+                <span>Sistema de Gestão Técnica</span>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+<script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

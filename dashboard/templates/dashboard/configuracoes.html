@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações | Valvulman{% endblock %}
+{% block page_heading %}Configurações{% endblock %}
+{% block breadcrumb %}Gestão{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <header class="os-header">
+        <div>
+            <h1>Configurações do produto</h1>
+            <p>Preferências e acessos do Valvulman. A administração técnica do Django permanece separada.</p>
+        </div>
+    </header>
+
+    <div class="os-resumo">
+        {% if perms.auth.view_user %}
+        <a class="resumo-card vm-card--kpi" href="{% url 'acesso:lista_usuarios' %}">
+            <span class="resumo-label">Usuários e perfis</span>
+            <strong class="resumo-valor">Acessar</strong>
+        </a>
+        {% endif %}
+        {% if perms.acesso.view_registroauditoria %}
+        <a class="resumo-card vm-card--kpi" href="{% url 'acesso:lista_auditoria' %}">
+            <span class="resumo-label">Auditoria</span>
+            <strong class="resumo-valor">Consultar</strong>
+        </a>
+        {% endif %}
+        {% if user.is_staff or user.is_superuser %}
+        <a class="resumo-card vm-card--kpi" href="{% url 'design_system' %}">
+            <span class="resumo-label">Design System</span>
+            <strong class="resumo-valor">Catálogo</strong>
+        </a>
+        {% endif %}
+    </div>
+
+    <section class="os-card">
+        <div class="os-card-header">
+            <h2>Identidade e parâmetros</h2>
+        </div>
+        <div class="vm-card__body">
+            <p>Dados da empresa, logo e parâmetros operacionais serão configurados nesta área quando estiverem disponíveis no produto. Nenhum campo foi inventado nesta etapa.</p>
+        </div>
+    </section>
+
+    {% if user.is_staff %}
+    <section class="os-card">
+        <div class="os-card-header">
+            <h2>Administração técnica</h2>
+        </div>
+        <div class="vm-card__body">
+            <p>O Django Admin não faz parte da interface operacional do Valvulman. Use-o apenas para manutenção interna.</p>
+            <a class="vm-btn vm-btn-secondary" href="{% url 'admin:index' %}">Abrir administração técnica</a>
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

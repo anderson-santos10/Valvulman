@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Design System | Valvulman{% endblock %}
+{% block page_heading %}Design System{% endblock %}
+{% block breadcrumb %}Catálogo vivo dos componentes visuais{% endblock %}
+
+{% block content %}
+<div class="dashboard-home">
+    <header class="dashboard-header">
+        <h1>Fundação visual Valvulman</h1>
+        <p>Tokens, tipografia e componentes para a interface de metrologia. Documentos A4 oficiais não usam este catálogo.</p>
+    </header>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Cores</h2></div>
+        <div class="vm-card__body vm-token-grid">
+            <div><div class="vm-swatch" style="background:var(--vm-color-primary)"></div><p class="vm-text-caption">primary</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-primary-dark)"></div><p class="vm-text-caption">primary-dark</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-primary-light)"></div><p class="vm-text-caption">primary-light</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-accent)"></div><p class="vm-text-caption">accent</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-success)"></div><p class="vm-text-caption">success</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-warning)"></div><p class="vm-text-caption">warning</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-danger)"></div><p class="vm-text-caption">danger</p></div>
+            <div><div class="vm-swatch" style="background:var(--vm-color-info)"></div><p class="vm-text-caption">info</p></div>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Tipografia</h2></div>
+        <div class="vm-card__body">
+            <h1>Título H1</h1>
+            <h2>Título H2</h2>
+            <h3>Título H3</h3>
+            <h4>Título H4</h4>
+            <p>Texto de corpo 15px. Precisão, confiabilidade e rastreabilidade.</p>
+            <p class="vm-text-small">Small 13px</p>
+            <p class="vm-text-caption">Caption 12px</p>
+            <p class="vm-mono">CERT-000001 · SN-I-100</p>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Espaçamento</h2></div>
+        <div class="vm-card__body" style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;">
+            <div style="width:var(--vm-space-1);height:var(--vm-space-4);background:var(--vm-color-primary)"></div>
+            <div style="width:var(--vm-space-4);height:var(--vm-space-4);background:var(--vm-color-primary)"></div>
+            <div style="width:var(--vm-space-6);height:var(--vm-space-6);background:var(--vm-color-primary)"></div>
+            <div style="width:var(--vm-space-10);height:var(--vm-space-7);background:var(--vm-color-primary)"></div>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Botões</h2></div>
+        <div class="vm-card__body" style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button type="button" class="vm-btn">Primary</button>
+            <button type="button" class="vm-btn vm-btn-secondary">Secondary</button>
+            <button type="button" class="vm-btn vm-btn-tertiary">Tertiary</button>
+            <button type="button" class="vm-btn vm-btn-danger">Danger</button>
+            <button type="button" class="vm-btn vm-btn-compact">Compact</button>
+            <button type="button" class="vm-btn is-loading" disabled><span class="vm-spinner" aria-hidden="true"></span> Loading</button>
+            <button type="button" class="vm-btn" disabled>Disabled</button>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Badges</h2></div>
+        <div class="vm-card__body" style="display:flex;flex-wrap:wrap;gap:8px;">
+            <span class="vm-badge">Default</span>
+            <span class="vm-badge vm-badge--success">Concluída</span>
+            <span class="vm-badge vm-badge--warning">Em revisão</span>
+            <span class="vm-badge vm-badge--danger">Vencida</span>
+            <span class="vm-badge vm-badge--info">Emitido</span>
+            <span class="vm-badge vm-badge--neutral">Rascunho</span>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Cards e KPI</h2></div>
+        <div class="vm-card__body dashboard-metrics">
+            <a class="vm-card vm-card--kpi" href="#">
+                <span class="vm-card__label">OS abertas</span>
+                <strong class="vm-card__value">12</strong>
+            </a>
+            <div class="vm-card vm-card--kpi is-alert">
+                <span class="vm-card__label">Atrasadas</span>
+                <strong class="vm-card__value">3</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Alerts</h2></div>
+        <div class="vm-card__body" style="display:grid;gap:8px;">
+            <div class="vm-alert vm-alert--success">Calibração concluída.</div>
+            <div class="vm-alert vm-alert--info">Certificado disponível para impressão.</div>
+            <div class="vm-alert vm-alert--warning">Padrão próximo da validade.</div>
+            <div class="vm-alert vm-alert--danger">Cobrança vencida.</div>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Formulários</h2></div>
+        <div class="vm-card__body">
+            <div class="vm-field">
+                <label class="vm-label" for="ds-input">Instrumento <span class="vm-required">*</span></label>
+                <input class="vm-input" id="ds-input" placeholder="Código ou TAG">
+                <span class="vm-help">Use o código interno do laboratório.</span>
+            </div>
+            <div class="vm-field is-error">
+                <label class="vm-label" for="ds-error">Número de série</label>
+                <input class="vm-input is-error" id="ds-error" value="">
+                <span class="vm-error">Informe o número de série.</span>
+            </div>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-select">Unidade</label>
+                <select class="vm-select" id="ds-select">
+                    <option>bar</option>
+                    <option>psi</option>
+                </select>
+            </div>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-area">Observações</label>
+                <textarea class="vm-textarea" id="ds-area"></textarea>
+            </div>
+            <label class="vm-check"><input type="checkbox"> Ativo</label>
+            <label class="vm-radio"><input type="radio" name="ds-radio"> Aprovado</label>
+            <label class="vm-radio"><input type="radio" name="ds-radio"> Reprovado</label>
+            <p class="vm-text-small">Toggle</p>
+            <button type="button" class="vm-toggle" aria-pressed="false" aria-label="Ativar notificação"></button>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-date">Data</label>
+                <input class="vm-input" id="ds-date" type="date">
+            </div>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-file">Arquivo</label>
+                <input class="vm-input" id="ds-file" type="file">
+            </div>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-search">Busca</label>
+                <input class="vm-input" id="ds-search" type="search" placeholder="Pesquisar">
+            </div>
+            <div class="vm-field">
+                <label class="vm-label" for="ds-readonly">Somente leitura</label>
+                <input class="vm-input" id="ds-readonly" readonly value="CERT-000001">
+            </div>
+        </div>
+    </section>
+
+    <section class="vm-card vm-stack">
+        <div class="vm-card__header"><h2>Filter bar</h2></div>
+        <div class="vm-card__body">
+            <div class="vm-filter-bar">
+                <input type="search" aria-label="Buscar" placeholder="OS, CERT, cliente">
+                <select aria-label="Status"><option>Todos os status</option></select>
+                <button type="button" class="vm-btn vm-btn-secondary">Filtrar</button>
+                <a class="vm-btn vm-btn-tertiary" href="#">Limpar filtros</a>
+            </div>
+            <p class="vm-text-caption">Texto para identificadores; select para enums; datas para período. Autocomplete de cliente/instrumento fica para endpoint de busca dedicado nas listas. O cadastro de OS já consulta instrumentos por cliente.</p>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Tabela e paginação</h2></div>
+        <div class="vm-table-wrap">
+            <table class="vm-table">
+                <thead>
+                    <tr><th>Número</th><th>Status</th><th>Ações</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="vm-mono">OS-000001</td>
+                        <td><span class="vm-badge vm-badge--info">Em execução</span></td>
+                        <td><button type="button" class="vm-btn vm-btn--ghost vm-btn--sm">Abrir</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="vm-pagination">
+            <button type="button" class="vm-btn vm-btn--outline vm-btn--sm">Anterior</button>
+            <span class="vm-text-small">Página 1 de 4</span>
+            <button type="button" class="vm-btn vm-btn--outline vm-btn--sm">Próxima</button>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Navegação</h2></div>
+        <div class="vm-card__body">
+            <nav class="vm-breadcrumb" aria-label="Exemplo">
+                <a href="{% url 'home' %}">Início</a>
+                <span>/</span>
+                <span>Design System</span>
+            </nav>
+            <div data-vm-tabs>
+                <div class="vm-tabs" role="tablist">
+                    <button type="button" class="vm-tab" role="tab" aria-selected="true" aria-controls="tab-a" id="tab-btn-a">Ensaio</button>
+                    <button type="button" class="vm-tab" role="tab" aria-selected="false" aria-controls="tab-b" id="tab-btn-b">Certificado</button>
+                </div>
+                <div id="tab-a" role="tabpanel" aria-labelledby="tab-btn-a">Pontos de calibração.</div>
+                <div id="tab-b" role="tabpanel" aria-labelledby="tab-btn-b" hidden>Emissão e QR Code.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Modal, toast, drawer</h2></div>
+        <div class="vm-card__body" style="display:flex;flex-wrap:wrap;gap:8px;">
+            <button type="button" class="vm-btn" data-vm-open="ds-modal">Abrir modal</button>
+            <button type="button" class="vm-btn vm-btn--secondary" data-vm-open="ds-drawer">Abrir drawer</button>
+            <button type="button" class="vm-btn vm-btn--outline" data-vm-toast="Pagamento registrado.">Toast</button>
+        </div>
+    </section>
+
+    <div class="vm-modal" id="ds-modal" hidden>
+        <div class="vm-overlay" data-vm-close></div>
+        <div class="vm-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="ds-modal-title">
+            <div class="vm-modal__header"><h2 id="ds-modal-title">Confirmar ação</h2></div>
+            <div class="vm-modal__body">Esta é a confirmação padrão do Design System.</div>
+            <div class="vm-modal__footer">
+                <button type="button" class="vm-btn vm-btn--ghost" data-vm-close>Cancelar</button>
+                <button type="button" class="vm-btn" data-vm-close>Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="vm-drawer" id="ds-drawer" hidden>
+        <h2>Filtros</h2>
+        <p class="vm-text-small">Drawer lateral para filtros futuros.</p>
+        <button type="button" class="vm-btn vm-btn--outline" data-vm-close>Fechar</button>
+    </div>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Loading, skeleton, empty</h2></div>
+        <div class="vm-card__body">
+            <div class="vm-spinner" role="status" aria-label="Carregando"></div>
+            <div class="vm-skeleton" style="margin-top:16px;width:60%;"></div>
+            <div class="vm-skeleton" style="margin-top:8px;width:40%;"></div>
+            {% include "components/_empty_state.html" with title="Nenhuma OS na fila" text="Quando houver ordens, elas aparecem aqui." %}
+        </div>
+    </section>
+
+    <section class="vm-card" style="margin-bottom:24px;">
+        <div class="vm-card__header"><h2>Timeline, stepper, progress, avatar</h2></div>
+        <div class="vm-card__body">
+            <ol class="vm-timeline">
+                <li>OS aberta</li>
+                <li>Em execução</li>
+                <li>Aguardando revisão</li>
+            </ol>
+            <div class="vm-stepper">
+                <div class="vm-step is-done"><span class="vm-step__index">1</span> Entrada</div>
+                <div class="vm-step is-current"><span class="vm-step__index">2</span> Ensaio</div>
+                <div class="vm-step"><span class="vm-step__index">3</span> Certificado</div>
+            </div>
+            <div class="vm-progress" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><span style="width:60%"></span></div>
+            <span class="vm-avatar" aria-hidden="true">VM</span>
+            <button type="button" class="vm-btn vm-btn--outline vm-btn--sm" data-vm-copy="CERT-000001">Copiar número</button>
+        </div>
+    </section>
+
+    <section class="vm-card vm-doc-frame">
+        <div class="vm-card__header"><h2>Documento e QR</h2></div>
+        <div class="vm-card__body">
+            <p class="vm-mono">CERT-000001</p>
+            <svg width="88" height="88" viewBox="0 0 88 88" role="img" aria-label="Exemplo de QR Code">
+                <rect width="88" height="88" fill="#0B1F33"/>
+                <rect x="10" y="10" width="28" height="28" fill="#E8F4FA"/>
+                <rect x="50" y="10" width="28" height="28" fill="#E8F4FA"/>
+                <rect x="10" y="50" width="28" height="28" fill="#E8F4FA"/>
+                <rect x="46" y="46" width="8" height="8" fill="#16A3D9"/>
+                <rect x="58" y="58" width="20" height="20" fill="#E8F4FA"/>
+            </svg>
+            <p class="vm-text-caption">O QR real dos certificados continua gerado com segno nos documentos oficiais.</p>
+        </div>
+    </section>
+</div>
+{% endblock %}

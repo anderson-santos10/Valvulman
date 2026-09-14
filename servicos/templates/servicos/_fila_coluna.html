@@ -1,0 +1,30 @@
+<section class="fila-coluna">
+    <h2>{{ titulo }}</h2>
+    {% for ordem in ordens %}
+        <article class="fila-card{% if ordem.esta_atrasada %} is-atrasada{% endif %}">
+            <strong class="numero-os">{{ ordem.numero }}</strong>
+            <p>{{ ordem.cliente.nome }}</p>
+            <p>{{ ordem.total_itens }} instrumento{{ ordem.total_itens|pluralize }}</p>
+            <p>Entrada {{ ordem.data_entrada|date:"d/m/Y" }}{% if ordem.data_previsao_entrega %} · Previsão {{ ordem.data_previsao_entrega|date:"d/m/Y" }}{% endif %}</p>
+            {% if ordem.esta_atrasada %}<p class="os-situacao-atrasada">Atrasada</p>{% endif %}
+            <div class="fila-card-acoes">
+                {% if acao == "iniciar" %}
+                    <form method="post" action="{% url 'servicos:iniciar_ordem' ordem.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-acao visualizar">Iniciar</button>
+                    </form>
+                {% elif acao == "revisao" %}
+                    <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}" class="btn-acao visualizar">Revisar</a>
+                {% elif acao == "entregar" %}
+                    <form method="post" action="{% url 'servicos:entregar_ordem' ordem.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nova-os">Entregar</button>
+                    </form>
+                {% endif %}
+                <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}" class="btn-acao editar">{% if acao == "detalhe" %}Ir para OS{% else %}Visualizar{% endif %}</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>Nenhuma OS nesta etapa.</p>
+    {% endfor %}
+</section>

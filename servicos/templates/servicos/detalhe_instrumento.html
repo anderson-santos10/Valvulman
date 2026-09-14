@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Instrumento {{ instrumento.codigo }} | Valvulman{% endblock %}
+{% block page_heading %}{{ instrumento.codigo }}{% endblock %}
+{% block breadcrumb %}Cadastros / Instrumentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ instrumento.codigo }}</h1>
+            <p>{{ instrumento.cliente.nome }}</p>
+            <p>
+                Situação:
+                <strong class="{% if situacao_codigo == 'vencida' %}os-situacao-atrasada{% endif %}">{{ situacao_rotulo }}</strong>
+            </p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'clientes:detalhe_cliente' instrumento.cliente_id %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:cadastrar_calibracao' %}?instrumento={{ instrumento.pk }}" class="btn-acao visualizar">Nova calibração</a>
+            <a href="{% url 'servicos:editar_instrumento' instrumento.pk %}" class="btn-nova-os">Editar</a>
+            {% if instrumento.ativo %}
+                <form method="post" action="{% url 'servicos:inativar_instrumento' instrumento.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Inativar</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Identificação</h2>
+                <span>
+                    {% if instrumento.ativo %}
+                        <span class="vm-badge vm-badge--success">Ativo</span>
+                    {% else %}
+                        <span class="vm-badge vm-badge--danger">Inativo</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Código interno</span>
+                <span>{{ instrumento.codigo }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">TAG</span>
+                <span>{{ instrumento.tag|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Número de série</span>
+                <span>{{ instrumento.numero_serie|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Fabricante</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Fabricante</span>
+                <span>{{ instrumento.fabricante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Modelo</span>
+                <span>{{ instrumento.modelo|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Características</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Tipo</span>
+                <span>{{ instrumento.get_tipo_display }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Faixa de medição</span>
+                <span>{{ instrumento.faixa_formatada|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Unidade</span>
+                <span>{{ instrumento.get_unidade_display|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Resolução</span>
+                <span>{{ instrumento.resolucao_formatada|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Cadastrado em</span>
+                <span>{{ instrumento.criado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Atualizado em</span>
+                <span>{{ instrumento.atualizado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ instrumento.observacoes|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Última calibração</span>
+                {% if ultima_calibracao %}
+                    <strong>
+                        <a href="{% url 'servicos:detalhe_calibracao' ultima_calibracao.pk %}">{{ ultima_calibracao.numero }}</a>
+                    </strong>
+                    <span>{{ ultima_calibracao.data_calibracao|date:"d/m/Y" }}</span>
+                {% else %}
+                    <span>—</span>
+                {% endif %}
+            </div>
+            <div>
+                <span class="detalhe-label">Validade</span>
+                <span>{{ ultima_calibracao.data_validade|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Próxima calibração</span>
+                <span>{{ ultima_calibracao.data_proxima_calibracao|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Cliente</h2>
+                <span>Proprietário deste instrumento</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' instrumento.cliente_id %}">{{ instrumento.cliente.nome }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">CNPJ</span>
+                <span>{{ instrumento.cliente.cnpj }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Histórico do instrumento</h2>
+                <span>Eventos obtidos das OS e calibrações existentes, pela data operacional.</span>
+            </div>
+        </div>
+        <div>
+            {% for evento in eventos %}
+                <article class="historico-evento">
+                    <div class="historico-data">{{ evento.data|date:"d/m/Y" }}</div>
+                    {% if evento.ordem %}
+                        <p>OS <a href="{% url 'servicos:detalhe_ordem' evento.ordem.pk %}">{{ evento.ordem.numero }}</a></p>
+                    {% endif %}
+                    {% if evento.calibracao %}
+                        <p>
+                            Calibração
+                            <a href="{% url 'servicos:detalhe_calibracao' evento.calibracao.pk %}">{{ evento.calibracao.numero }}</a>
+                            · Resultado: {{ evento.calibracao.get_resultado_display }}
+                        </p>
+                        {% if evento.certificado %}
+                            <p>
+                                Certificado
+                                <a href="{% url 'servicos:detalhe_certificado' evento.certificado.pk %}">{{ evento.certificado.numero }}</a>
+                            </p>
+                        {% endif %}
+                        <p>Validade: {{ evento.calibracao.data_validade|date:"d/m/Y"|default:"—" }}</p>
+                    {% elif evento.item %}
+                        <p>{{ evento.item.get_servico_solicitado_display }} · {{ evento.item.get_status_display }}</p>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <p>Ainda não há histórico operacional para este instrumento.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Histórico de calibrações</h2>
+                <span>Ensaios deste instrumento, ordenados por data de calibração.</span>
+            </div>
+            <a href="{% url 'servicos:cadastrar_calibracao' %}?instrumento={{ instrumento.pk }}" class="btn-nova-os">Nova calibração</a>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Data</th>
+                        <th>Procedimento</th>
+                        <th>Padrão</th>
+                        <th>Tolerância</th>
+                        <th>Resultado</th>
+                        <th>Status</th>
+                        <th>Validade</th>
+                        <th>Certificado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for calibracao in calibracoes %}
+                    <tr>
+                        <td><strong class="numero-os">{{ calibracao.numero }}</strong></td>
+                        <td>{{ calibracao.data_calibracao|date:"d/m/Y" }}</td>
+                        <td>{{ calibracao.procedimento|default:"—" }}</td>
+                        <td>{{ calibracao.padrao_utilizado|default:calibracao.padrao|default:"—" }}</td>
+                        <td>{{ calibracao.tolerancia_formatada|default:"—" }}</td>
+                        <td>{{ calibracao.get_resultado_display }}</td>
+                        <td>{{ calibracao.get_status_display }}</td>
+                        <td>{{ calibracao.data_validade|date:"d/m/Y"|default:"—" }}</td>
+                        <td>
+                            {% if calibracao.certificado_atual %}
+                                <a href="{% url 'servicos:detalhe_certificado' calibracao.certificado_atual.pk %}">
+                                    {{ calibracao.certificado_atual.numero }}
+                                </a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_calibracao' calibracao.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                {% if calibracao.pode_editar %}
+                                    <a href="{% url 'servicos:editar_calibracao' calibracao.pk %}" class="btn-acao editar">Editar</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma calibração registrada</h3>
+                                <p>Os ensaios deste instrumento aparecerão nesta lista.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Certificados</h2>
+                <span>Documentos emitidos a partir das calibrações deste instrumento.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Emissão</th>
+                        <th>Resultado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificado in certificados %}
+                    <tr>
+                        <td><strong class="numero-os">{{ certificado.numero }}</strong></td>
+                        <td>{{ certificado.emitido_em|date:"d/m/Y" }}</td>
+                        <td>{{ certificado.calibracao.get_resultado_display }}</td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_certificado' certificado.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:gerar_pdf_certificado' certificado.pk %}" class="btn-acao imprimir">PDF</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">Nenhum certificado emitido para este instrumento.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Orçamentos relacionados</h2>
+                <span>Propostas comerciais que citam este instrumento.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Emissão</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orcamento in orcamentos_relacionados %}
+                    <tr>
+                        <td><strong class="numero-os">{{ orcamento.numero }}</strong></td>
+                        <td>{{ orcamento.data_emissao|date:"d/m/Y" }}</td>
+                        <td>{{ orcamento.get_status_display }}</td>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_orcamento' orcamento.pk %}" class="btn-acao visualizar">Visualizar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">Nenhum orçamento relacionado a este instrumento.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Novo Instrumento | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cliente-page">
+    <div class="cliente-page-header">
+        <div class="cliente-header-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+        </div>
+        <div>
+            <h1>Novo Instrumento</h1>
+            <p>Cadastre um instrumento de medição vinculado a um cliente.</p>
+        </div>
+    </div>
+
+    <div class="cliente-card">
+        {% include "servicos/_form_instrumento.html" with botao_salvar="Salvar cadastro" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+<form method="post" action="" class="cliente-form calibracao-form" novalidate data-origens-url="{% url 'servicos:origens_financeiras_por_cliente' 0 %}">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="form-alert"><div>{{ form.non_field_errors }}</div></div>
+    {% endif %}
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">01</div>
+            <div>
+                <h2>Cobrança</h2>
+                <p>Cliente obrigatório. Orçamento e OS são opcionais em cobranças manuais.</p>
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.cliente.id_for_label }}">Cliente <span class="required">*</span></label>
+            {{ form.cliente }}
+            {% if form.cliente.errors %}<div class="form-error">{{ form.cliente.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.orcamento.id_for_label }}">Orçamento</label>
+                {{ form.orcamento }}
+                {% if form.orcamento.errors %}<div class="form-error">{{ form.orcamento.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.ordem_servico.id_for_label }}">Ordem de serviço</label>
+                {{ form.ordem_servico }}
+                {% if form.ordem_servico.errors %}<div class="form-error">{{ form.ordem_servico.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.descricao.id_for_label }}">Descrição <span class="required">*</span></label>
+            {{ form.descricao }}
+            {% if form.descricao.errors %}<div class="form-error">{{ form.descricao.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">02</div>
+            <div>
+                <h2>Valores</h2>
+                <p>O valor final é calculado no servidor: original − desconto + acréscimo.</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.valor_original.id_for_label }}">Valor original <span class="required">*</span></label>
+                {{ form.valor_original }}
+                {% if form.valor_original.errors %}<div class="form-error">{{ form.valor_original.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.desconto.id_for_label }}">Desconto</label>
+                {{ form.desconto }}
+                {% if form.desconto.errors %}<div class="form-error">{{ form.desconto.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.acrescimo.id_for_label }}">Acréscimo</label>
+                {{ form.acrescimo }}
+                {% if form.acrescimo.errors %}<div class="form-error">{{ form.acrescimo.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <p class="financeiro-preview">Valor final (prévia): <strong id="valor-final-preview">R$ 0,00</strong></p>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.data_emissao.id_for_label }}">Emissão <span class="required">*</span></label>
+                {{ form.data_emissao }}
+                {% if form.data_emissao.errors %}<div class="form-error">{{ form.data_emissao.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.data_vencimento.id_for_label }}">Vencimento <span class="required">*</span></label>
+                {{ form.data_vencimento }}
+                {% if form.data_vencimento.errors %}<div class="form-error">{{ form.data_vencimento.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.forma_pagamento.id_for_label }}">Forma preferencial</label>
+                {{ form.forma_pagamento }}
+                {% if form.forma_pagamento.errors %}<div class="form-error">{{ form.forma_pagamento.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.observacoes.id_for_label }}">Observações</label>
+            {{ form.observacoes }}
+            {% if form.observacoes.errors %}<div class="form-error">{{ form.observacoes.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{% url 'servicos:lista_cobrancas' %}" class="vm-btn vm-btn-secondary">Cancelar</a>
+        <button type="submit" class="btn-nova-os">{{ botao_salvar }}</button>
+    </div>
+</form>

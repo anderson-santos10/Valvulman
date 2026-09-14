@@ -1,0 +1,98 @@
+.os-print-acoes {
+    max-width: 210mm;
+    margin: 16px auto;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.os-print-acoes a,
+.os-print-acoes button {
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #0f2b48;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.os-print-paper {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 16mm;
+    background: #fff;
+    color: #1e293b;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+}
+
+.os-print-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 2px solid #0f2b48;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.os-print-header strong {
+    display: block;
+    letter-spacing: 0.08em;
+}
+
+.os-print-title {
+    margin-left: auto;
+    text-align: right;
+}
+
+.os-print-title h1 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.os-print-paper h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+.os-print-paper dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+}
+
+.os-print-paper dt {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.os-print-paper dd {
+    margin: 0;
+    font-weight: 700;
+}
+
+.os-print-paper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.os-print-paper th,
+.os-print-paper td {
+    border: 1px solid #cbd5e1;
+    padding: 6px;
+    text-align: left;
+}
+
+.os-print-recebimento {
+    margin-top: 28px;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}

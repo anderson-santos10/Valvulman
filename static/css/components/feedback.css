@@ -1,0 +1,70 @@
+.badge-valvulas,
+.status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 var(--vm-space-3);
+    border-radius: var(--vm-radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--vm-color-surface-muted);
+    color: var(--vm-color-text-secondary);
+    border: 1px solid transparent;
+}
+
+.status.aprovado,
+.vm-badge--success.status {
+    background: var(--vm-color-success-bg);
+    color: var(--vm-color-success);
+}
+
+.status.pendente {
+    background: var(--vm-color-warning-bg);
+    color: var(--vm-color-warning);
+}
+
+.status.inativo,
+.status.inativa,
+.status.reprovado,
+.status.cancelada,
+.status.expirado,
+.status.vencida {
+    background: var(--vm-color-danger-bg);
+    color: var(--vm-color-danger);
+}
+
+.status.execucao,
+.status.emitido,
+.status.recebida {
+    background: var(--vm-color-info-bg);
+    color: var(--vm-color-info);
+}
+
+.sem-informacao {
+    color: var(--vm-color-text-muted);
+}
+
+.app-message,
+.form-alert,
+.login-error {
+    display: flex;
+    gap: var(--vm-space-3);
+    padding: var(--vm-space-3) var(--vm-space-4);
+    border-radius: var(--vm-radius-sm);
+    border: 1px solid var(--vm-color-border);
+    background: var(--vm-color-surface);
+}
+
+.app-message-success { background: var(--vm-color-success-bg); border-color: #b7e0cb; color: var(--vm-color-success); }
+.app-message-error,
+.app-message-danger,
+.login-error,
+.form-alert,
+.vm-alert--error {
+    background: var(--vm-color-danger-bg);
+    border-color: #e8b4b4;
+    color: var(--vm-color-danger);
+}
+.app-message-warning { background: var(--vm-color-warning-bg); border-color: #ead6ad; color: var(--vm-color-warning); }
+.app-message-info,
+.app-message-debug { background: var(--vm-color-info-bg); border-color: #c5d3f8; color: var(--vm-color-info); }

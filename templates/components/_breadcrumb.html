@@ -1,0 +1,10 @@
+<nav class="vm-breadcrumb" aria-label="Trilha">
+    {% for item in items %}
+        {% if item.url %}
+        <a href="{{ item.url }}">{{ item.label }}</a>
+        <span aria-hidden="true">/</span>
+        {% else %}
+        <span>{{ item.label }}</span>
+        {% endif %}
+    {% endfor %}
+</nav>

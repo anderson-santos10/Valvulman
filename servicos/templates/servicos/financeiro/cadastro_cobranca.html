@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nova cobrança | Valvulman{% endblock %}
+{% block page_heading %}Nova cobrança{% endblock %}
+{% block breadcrumb %}Financeiro / Cobranças{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/financeiro.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/financeiro.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>{% if geracao_os %}Gerar cobrança{% else %}Nova cobrança{% endif %}</h1>
+            <p>
+                {% if geracao_os %}
+                    Revise o valor da OS {{ ordem_origem.numero }} antes de confirmar.
+                {% else %}
+                    Registro comercial interno. Sem boleto ou PIX automático.
+                {% endif %}
+            </p>
+        </div>
+        {% include "servicos/financeiro/_form_cobranca.html" with botao_salvar="Salvar cobrança" %}
+    </div>
+</div>
+{% endblock %}

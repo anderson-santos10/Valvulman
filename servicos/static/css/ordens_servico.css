@@ -1,0 +1,4 @@
+/* Compatibilidade: o kit visual de listas/detalhes vive em
+   static/css/components/ (page-headers, cards, tables, buttons, feedback).
+   Templates devem usar {% include "components/_css_shared.html" %}.
+   Este arquivo não define mais regras para não duplicar a fonte. */

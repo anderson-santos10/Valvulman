@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar {{ usuario.username }} | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>Editar {{ usuario.username }}</h1>
+            <p>Deixe a senha em branco para manter a atual.</p>
+        </div>
+        {% include "acesso/_form_usuario.html" with botao_salvar="Salvar alterações" %}
+    </div>
+</div>
+{% endblock %}

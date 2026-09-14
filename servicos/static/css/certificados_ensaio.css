@@ -1,0 +1,319 @@
+.ensaio-cert-page {
+    background: #e2e8f0;
+    padding: 24px 12px 48px;
+}
+
+.ensaio-cert-acoes {
+    max-width: 210mm;
+    margin: 0 auto 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.ensaio-cert-acoes a,
+.ensaio-cert-acoes button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #0f2b48;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+.btn-imprimir {
+    background: #0284c7;
+    color: #fff;
+    border-color: #0284c7;
+}
+
+.ensaio-cert-paper {
+    background: #fff;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 18mm 16mm;
+    box-shadow: 0 4px 16px rgba(15, 43, 72, 0.12);
+    color: #1e293b;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.ensaio-cert-paper.esta-cancelado {
+    outline: 3px solid #b91c1c;
+}
+
+.ensaio-cert-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 2px solid #0f2b48;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.ensaio-cert-logo {
+    width: 56px;
+    height: 56px;
+}
+
+.ensaio-cert-brand {
+    flex: 1;
+}
+
+.ensaio-cert-brand strong {
+    display: block;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    color: #0f2b48;
+}
+
+.ensaio-cert-brand span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.ensaio-cert-title {
+    text-align: right;
+}
+
+.ensaio-cert-title h1 {
+    margin: 0;
+    font-size: 18px;
+    color: #0f2b48;
+}
+
+.ensaio-cert-qr-box {
+    text-align: center;
+}
+
+.ensaio-cert-qr {
+    width: 72px;
+    height: 72px;
+    display: block;
+}
+
+.ensaio-cert-qr-box span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.ensaio-cert-banner-cancelado {
+    background: #b91c1c;
+    color: #fff;
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 8px;
+    margin-bottom: 14px;
+}
+
+.ensaio-cert-section {
+    margin-bottom: 14px;
+}
+
+.ensaio-cert-section h2 {
+    margin: 0 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #0f2b48;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 4px;
+}
+
+.ensaio-cert-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+}
+
+.ensaio-cert-grid .span-2 {
+    grid-column: 1 / -1;
+}
+
+.ensaio-cert-grid dt {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.ensaio-cert-grid dd {
+    margin: 0 0 6px;
+    font-weight: 600;
+}
+
+.ensaio-cert-padrao {
+    white-space: pre-line;
+    font-weight: 600;
+}
+
+.ensaio-cert-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.ensaio-cert-table th,
+.ensaio-cert-table td {
+    border: 1px solid #cbd5e1;
+    padding: 5px 6px;
+    text-align: left;
+}
+
+.ensaio-cert-table th {
+    background: #f1f5f9;
+    color: #0f2b48;
+}
+
+.ensaio-cert-table thead {
+    display: table-header-group;
+}
+
+.ensaio-cert-resumo {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ensaio-cert-resumo div {
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+}
+
+.ensaio-cert-resumo span {
+    display: block;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.ensaio-cert-resultado {
+    margin: 12px 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    border: 2px solid #0f2b48;
+    padding: 10px;
+}
+
+.ensaio-cert-resultado.reprovado {
+    border-color: #b91c1c;
+    color: #b91c1c;
+}
+
+.ensaio-cert-obs,
+.ensaio-cert-nota {
+    font-size: 11px;
+    color: #334155;
+}
+
+.ensaio-cert-assinaturas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.ensaio-cert-assinatura {
+    margin-top: 0;
+    max-width: none;
+}
+
+.ensaio-cert-assinatura .linha {
+    border-bottom: 1px solid #0f2b48;
+    height: 36px;
+    margin-bottom: 6px;
+}
+
+.ensaio-cert-assinatura p {
+    margin: 0;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.ensaio-cert-assinatura strong {
+    display: block;
+    margin-top: 2px;
+}
+
+.ensaio-cert-assinatura span {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.ensaio-cert-footer {
+    margin-top: 18px;
+    font-size: 10px;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 8px;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    html,
+    body {
+        background: #fff !important;
+    }
+
+    .sidebar,
+    .sidebar-overlay,
+    .mobile-toggle-btn,
+    .app-messages,
+    .ensaio-cert-acoes,
+    .no-print {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .ensaio-cert-page {
+        background: none;
+        padding: 0;
+    }
+
+    .ensaio-cert-paper {
+        box-shadow: none;
+        max-width: none;
+        padding: 0;
+    }
+
+    .ensaio-cert-table thead {
+        display: table-header-group;
+    }
+
+    .ensaio-cert-table tr {
+        page-break-inside: avoid;
+    }
+
+    .ensaio-cert-header,
+    .ensaio-cert-footer {
+        page-break-inside: avoid;
+    }
+}
+
+@media (max-width: 800px) {
+    .ensaio-cert-grid,
+    .ensaio-cert-resumo {
+        grid-template-columns: 1fr 1fr;
+    }
+}

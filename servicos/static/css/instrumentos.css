@@ -1,0 +1,66 @@
+form.logout-form button.btn-acao {
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    font: inherit;
+}
+
+.instrumentos-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.instrumentos-filtros input,
+.instrumentos-filtros select {
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f2b48;
+}
+
+.instrumentos-filtros input[type="search"] {
+    min-width: 260px;
+    flex: 1;
+}
+
+.instrumentos-paginacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.instrumento-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.instrumento-form .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+.instrumento-form .form-help {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+@media (max-width: 700px) {
+    .instrumento-form .form-row,
+    .instrumento-form .form-row-3,
+    .instrumentos-filtros input[type="search"] {
+        grid-template-columns: 1fr;
+        min-width: 0;
+        width: 100%;
+    }
+}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Válvulas | Valvulman{% endblock %}
+{% block page_heading %}Válvulas{% endblock %}
+{% block breadcrumb %}Cadastros{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/valvulas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Válvulas de Segurança</h1>
+            <p>
+                {% if cliente_filtro %}
+                    Cadastro mestre do cliente
+                    <a href="{% url 'clientes:detalhe_cliente' cliente_filtro.pk %}">{{ cliente_filtro.nome }}</a>.
+                {% else %}
+                    Cadastro mestre das válvulas por cliente.
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'servicos:cadastrar_valvula' %}{% if cliente_filtro %}?cliente={{ cliente_filtro.pk }}{% endif %}" class="btn-nova-os">
+            + Nova Válvula
+        </a>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header valvulas-toolbar">
+            <form method="get" class="valvulas-filtros">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar código, TAG, série, fabricante..." autocomplete="off">
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ cliente.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    <option value="ativa" {% if request.GET.status == "ativa" %}selected{% endif %}>Ativas</option>
+                    <option value="inativa" {% if request.GET.status == "inativa" %}selected{% endif %}>Inativas</option>
+                </select>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Identificação</th>
+                        <th>Cliente</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valvula in valvulas %}
+                    <tr>
+                        <td>
+                            <strong class="numero-os">{{ valvula.codigo }}</strong>
+                            {% if valvula.tag %}
+                                <div class="cliente-info"><span>TAG: {{ valvula.tag }}</span></div>
+                            {% endif %}
+                        </td>
+                        <td>{{ valvula.cliente.nome }}</td>
+                        <td>{{ valvula.fabricante|default:"—" }}</td>
+                        <td>{{ valvula.modelo|default:"—" }}</td>
+                        <td>{{ valvula.numero_serie|default:"—" }}</td>
+                        <td>
+                            {% if valvula.ativo %}
+                                <span class="vm-badge vm-badge--success">Ativa</span>
+                            {% else %}
+                                <span class="vm-badge vm-badge--danger">Inativa</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_valvula' valvula.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:editar_valvula' valvula.pk %}" class="btn-acao editar">Editar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma válvula cadastrada</h3>
+                                <p>Cadastre a primeira válvula de segurança do cliente.</p>
+                                <a href="{% url 'servicos:cadastrar_valvula' %}" class="btn-nova-os">+ Nova Válvula</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+            <div class="valvulas-paginacao">
+                <span>
+                    Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ paginator.count }}
+                </span>
+                <div class="acoes">
+                    {% if page_obj.has_previous %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&cliente={{ request.GET.cliente|default:'' }}&status={{ request.GET.status|default:'' }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&cliente={{ request.GET.cliente|default:'' }}&status={{ request.GET.status|default:'' }}&page={{ page_obj.next_page_number }}">Próxima</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

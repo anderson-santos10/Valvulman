@@ -1,0 +1,207 @@
+/* Formulários de cadastro/edição. Login não carrega este arquivo. */
+
+.cliente-form {
+    width: 100%;
+}
+
+.form-section {
+    padding: var(--vm-space-6);
+}
+
+.form-section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--vm-space-3);
+    margin-bottom: var(--vm-space-5);
+}
+
+.section-number {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-primary-dark);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.form-section-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--vm-color-primary-dark);
+}
+
+.form-section-header p {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: var(--vm-color-text-muted);
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: var(--vm-space-4);
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--vm-space-2);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vm-color-text);
+}
+
+.required {
+    color: var(--vm-color-danger);
+    margin-left: 2px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 0 var(--vm-space-3);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-surface);
+    color: var(--vm-color-text);
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.form-group textarea {
+    min-height: 96px;
+    padding: var(--vm-space-3);
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: 2px solid var(--vm-color-focus);
+    outline-offset: 1px;
+    border-color: var(--vm-color-accent);
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    background: var(--vm-color-surface-muted);
+    color: var(--vm-color-text-muted);
+    cursor: not-allowed;
+}
+
+.form-group input:read-only,
+.form-group textarea:read-only {
+    background: var(--vm-color-surface-muted);
+    cursor: default;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--vm-space-4);
+    margin-bottom: var(--vm-space-4);
+}
+
+@media (min-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.form-error {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--vm-color-danger);
+}
+
+.form-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--vm-space-3);
+    margin: var(--vm-space-4) var(--vm-space-6) 0;
+    padding: var(--vm-space-3) var(--vm-space-4);
+    border: 1px solid #e8b4b4;
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-danger-bg);
+    color: var(--vm-color-danger);
+    font-size: 13px;
+}
+
+.form-alert-icon {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.cliente-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vm-space-5);
+    padding: var(--vm-space-4) var(--vm-space-6);
+    background: var(--vm-color-surface-muted);
+    border-top: 1px solid var(--vm-color-border);
+}
+
+.form-required-info {
+    font-size: 12px;
+    color: var(--vm-color-text-muted);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--vm-space-2);
+}
+
+.cadastro-cliente-card > form > .form-actions {
+    padding: var(--vm-space-4) var(--vm-space-6) var(--vm-space-6);
+}
+
+@media (max-width: 767px) {
+    .form-section,
+    .cliente-form-footer {
+        padding: var(--vm-space-4);
+    }
+
+    .form-row .form-group {
+        margin-bottom: var(--vm-space-4);
+    }
+
+    .cliente-form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-required-info {
+        order: 2;
+    }
+
+    .form-actions {
+        width: 100%;
+        flex-direction: column-reverse;
+    }
+
+    .form-alert {
+        margin: var(--vm-space-4) var(--vm-space-4) 0;
+    }
+}

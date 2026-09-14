@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado de Calibração {{ certificado.numero }}</title>
+    <style>{{ certificado_css|safe }}</style>
+</head>
+<body class="ensaio-cert-pdf">
+    {% include "servicos/_documento_certificado_ensaio.html" %}
+</body>
+</html>

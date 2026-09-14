@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Válvula {{ valvula.codigo }} | Valvulman{% endblock %}
+{% block page_heading %}{{ valvula.codigo }}{% endblock %}
+{% block breadcrumb %}Cadastros / Válvulas{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/valvulas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ valvula.codigo }}</h1>
+            <p>{{ valvula.cliente.nome }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'clientes:detalhe_cliente' valvula.cliente_id %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:editar_valvula' valvula.pk %}" class="btn-nova-os">Editar</a>
+            {% if valvula.ativo %}
+                <form method="post" action="{% url 'servicos:inativar_valvula' valvula.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Inativar</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Cadastro</h2>
+                <span>
+                    {% if valvula.ativo %}
+                        <span class="vm-badge vm-badge--success">Ativa</span>
+                    {% else %}
+                        <span class="vm-badge vm-badge--danger">Inativa</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' valvula.cliente_id %}">{{ valvula.cliente.nome }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">CNPJ</span>
+                <span>{{ valvula.cliente.cnpj }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Código interno</span>
+                <span>{{ valvula.codigo }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">TAG</span>
+                <span>{{ valvula.tag|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Número de série</span>
+                <span>{{ valvula.numero_serie|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Fabricante</span>
+                <span>{{ valvula.fabricante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Modelo</span>
+                <span>{{ valvula.modelo|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Diâmetro nominal</span>
+                <span>{{ valvula.diametro_nominal|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Pressão de ajuste</span>
+                <span>{{ valvula.pressao_formatada|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Cadastrada em</span>
+                <span>{{ valvula.criado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Atualizada em</span>
+                <span>{{ valvula.atualizado_em|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ valvula.observacoes|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Uso em relatórios</h2>
+                <span>Relatório técnico legado. Não substitui a execução da OS.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Relatório</th>
+                        <th>Item</th>
+                        <th>TAG no relatório</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in usos_relatorio %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_relatorio' item.relatorio_id %}">
+                                {{ item.relatorio.numero_relatorio|default:item.relatorio.pk }}
+                            </a>
+                        </td>
+                        <td>{{ item.item }}</td>
+                        <td>{{ item.tag|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Ainda não usada em relatórios</h3>
+                                <p>O cadastro pode ser selecionado ao criar ou editar um relatório técnico.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Histórico operacional</h2>
+                <span>Ordens de serviço que receberam esta válvula.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>OS</th>
+                        <th>Serviço</th>
+                        <th>Entrada</th>
+                        <th>Status</th>
+                        <th>Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos_os %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'servicos:detalhe_ordem' evento.ordem.pk %}">
+                                {{ evento.ordem.numero }}
+                            </a>
+                        </td>
+                        <td>{{ evento.item.get_servico_solicitado_display }}</td>
+                        <td>{{ evento.data|date:"d/m/Y" }}</td>
+                        <td>{{ evento.item.get_status_display }}</td>
+                        <td>
+                            {% if evento.execucao %}
+                                <a href="{% url 'servicos:detalhe_execucao_valvula' evento.item.pk %}">
+                                    {{ evento.execucao.get_resultado_display }}
+                                </a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="tabela-vazia">Ainda não há ordem de serviço para esta válvula.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

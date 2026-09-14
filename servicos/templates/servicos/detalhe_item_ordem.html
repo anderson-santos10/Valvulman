@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ item.ordem_servico.numero }} / {{ item.codigo_equipamento }} | Valvulman{% endblock %}
+{% block page_heading %}{{ item.codigo_equipamento }}{% endblock %}
+{% block breadcrumb %}Operação / {{ item.ordem_servico.numero }}{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ item.ordem_servico.numero }} · item #{{ item.pk }}</h1>
+            <p>{{ item.ordem_servico.cliente.nome }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:detalhe_ordem' item.ordem_servico_id %}" class="btn-acao editar">Voltar à OS</a>
+            {% if item.exige_calibracao and item.calibracao_atual and item.calibracao_atual.status != 'cancelada' %}
+                {% if item.calibracao_atual.pode_editar %}
+                    <a href="{% url 'servicos:editar_calibracao' item.calibracao_atual.pk %}" class="btn-nova-os">Continuar calibração</a>
+                {% else %}
+                    <a href="{% url 'servicos:detalhe_calibracao' item.calibracao_atual.pk %}" class="btn-acao visualizar">Ver calibração</a>
+                {% endif %}
+            {% endif %}
+            {% if item.eh_valvula and item.ordem_servico.pode_editar %}
+                {% if not item.execucao_valvula_atual %}
+                    <form method="post" action="{% url 'servicos:abrir_execucao_valvula' item.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nova-os">Abrir execução</button>
+                    </form>
+                {% elif item.execucao_valvula_atual.status == 'rascunho' %}
+                    <a href="{% url 'servicos:detalhe_execucao_valvula' item.pk %}" class="btn-nova-os">Continuar execução</a>
+                {% else %}
+                    <a href="{% url 'servicos:detalhe_execucao_valvula' item.pk %}" class="btn-acao visualizar">Ver execução</a>
+                {% endif %}
+            {% elif item.eh_valvula and item.execucao_valvula_atual %}
+                <a href="{% url 'servicos:detalhe_execucao_valvula' item.pk %}" class="btn-acao visualizar">Ver execução</a>
+            {% endif %}
+            {% if not item.exige_calibracao and not item.eh_valvula and item.status == 'em_execucao' %}
+                <form method="post" action="{% url 'servicos:revisao_item_ordem' item.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao visualizar">Enviar para revisão</button>
+                </form>
+            {% endif %}
+            {% if not item.exige_calibracao and not item.eh_valvula and item.status == 'aguardando_revisao' %}
+                <form method="post" action="{% url 'servicos:concluir_item_ordem' item.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Concluir item</button>
+                </form>
+            {% endif %}
+            {% if not item.exige_calibracao and not item.eh_valvula and item.status == 'em_execucao' %}
+                <form method="post" action="{% url 'servicos:concluir_item_ordem' item.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Concluir item</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Equipamento</h2>
+                <span class="status">{{ item.get_status_display }}</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Código</span>
+                <strong>{{ item.codigo_equipamento }}</strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Tipo</span>
+                <span>{{ item.get_tipo_equipamento_display }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Serviço</span>
+                <span>{{ item.get_servico_solicitado_display }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">TAG</span>
+                <span>{{ item.tag_equipamento|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Número de série</span>
+                <span>{{ item.serie_equipamento|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Condição de recebimento</span>
+                <span>{{ item.condicao_recebimento|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações de recebimento</span>
+                <span>{{ item.observacoes_recebimento|default:"—" }}</span>
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ item.observacoes|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    {% if item.eh_valvula %}
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Execução</h2>
+            </div>
+        </div>
+        {% if item.execucao_valvula_atual %}
+            <p>
+                Execução
+                <a href="{% url 'servicos:detalhe_execucao_valvula' item.pk %}">{{ item.execucao_valvula_atual.get_status_display }}</a>
+                · {{ item.execucao_valvula_atual.get_resultado_display }}
+            </p>
+        {% else %}
+            <p>Ainda não há execução técnica vinculada a este item.</p>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if item.exige_calibracao %}
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Calibração</h2>
+            </div>
+        </div>
+        {% if item.calibracao_atual %}
+            <p>
+                Calibração
+                <a href="{% url 'servicos:detalhe_calibracao' item.calibracao_atual.pk %}">{{ item.calibracao_atual.numero }}</a>
+                · {{ item.calibracao_atual.get_status_display }}
+                · {{ item.calibracao_atual.get_resultado_display }}
+            </p>
+        {% else %}
+            <p>Ainda não há calibração vinculada a este item.</p>
+            {% if item.pode_iniciar_calibracao %}
+                <form method="post" action="{% url 'servicos:iniciar_item_ordem' item.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Iniciar serviço</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

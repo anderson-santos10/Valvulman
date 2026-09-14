@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ orcamento.numero }} | Valvulman</title>
+    <link rel="stylesheet" href="{% static 'css/imprimir_ordem.css' %}">
+    <link rel="stylesheet" href="{% static 'css/imprimir_orcamento.css' %}">
+</head>
+<body>
+    <div class="os-print-acoes no-print">
+        <a href="{% url 'servicos:detalhe_orcamento' orcamento.pk %}">Voltar</a>
+        <button type="button" id="btn-imprimir-os">Imprimir</button>
+    </div>
+    <article class="os-print-paper">
+        <header class="os-print-header">
+            <img src="{% static 'img/logo_valvulman.svg' %}" alt="Valvulman" width="56" height="56">
+            <div>
+                <strong>VALVULMAN</strong>
+                <span>Gestão técnica</span>
+            </div>
+            <div class="os-print-title">
+                <h1>ORÇAMENTO / PROPOSTA COMERCIAL</h1>
+                <p>{{ orcamento.numero }}</p>
+            </div>
+        </header>
+        <section>
+            <h2>Proposta</h2>
+            <dl>
+                <div><dt>Número</dt><dd>{{ orcamento.numero }}</dd></div>
+                <div><dt>Data</dt><dd>{{ orcamento.data_emissao|date:"d/m/Y" }}</dd></div>
+                <div><dt>Validade</dt><dd>{{ orcamento.data_validade|date:"d/m/Y"|default:"—" }}</dd></div>
+                <div><dt>Status</dt><dd>{{ orcamento.get_status_display }}</dd></div>
+            </dl>
+        </section>
+        <section>
+            <h2>Cliente</h2>
+            <p><strong>{{ orcamento.cliente_nome_exibicao }}</strong></p>
+            <p>Documento {{ orcamento.cliente_documento_exibicao }}</p>
+            <p>{{ orcamento.cliente_endereco_exibicao }}</p>
+        </section>
+        <section>
+            <h2>Itens</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor unit.</th>
+                        <th>Desconto</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in orcamento.itens.all %}
+                    <tr>
+                        <td>
+                            {{ item.get_servico_display }}
+                            {% if item.codigo_equipamento_exibicao %} — {{ item.codigo_equipamento_exibicao }}{% endif %}
+                            <br>{{ item.descricao }}
+                        </td>
+                        <td>{{ item.quantidade }}</td>
+                        <td>R$ {{ item.valor_unitario|floatformat:2 }}</td>
+                        <td>R$ {{ item.desconto|floatformat:2 }}</td>
+                        <td>R$ {{ item.total|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>Subtotal: R$ {{ totais.subtotal|floatformat:2 }}</p>
+            <p>Desconto: R$ {{ totais.desconto|floatformat:2 }}</p>
+            <p><strong>Total: R$ {{ totais.total|floatformat:2 }}</strong></p>
+        </section>
+        <section>
+            <h2>Condições comerciais</h2>
+            <p>{{ orcamento.condicoes_comerciais|default:"—" }}</p>
+        </section>
+        <section>
+            <h2>Observações</h2>
+            <p>{{ orcamento.observacoes|default:"—" }}</p>
+        </section>
+        <section>
+            <h2>Validade da proposta</h2>
+            <p>{{ orcamento.data_validade|date:"d/m/Y"|default:"Sem prazo definido" }}</p>
+        </section>
+    </article>
+    <script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+</body>
+</html>

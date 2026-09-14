@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ usuario.username }} | Valvulman{% endblock %}
+{% block page_heading %}{{ usuario.username }}{% endblock %}
+{% block breadcrumb %}Acesso / Usuários{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ usuario.username }}</h1>
+            <p>{% if usuario.is_active %}Ativo{% else %}Inativo{% endif %}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'acesso:lista_usuarios' %}" class="btn-acao editar">Voltar</a>
+            {% if perms.auth.change_user %}
+                <a href="{% url 'acesso:editar_usuario' usuario.pk %}" class="btn-nova-os">Editar</a>
+                {% if usuario.is_active %}
+                    {% if usuario.pk != request.user.pk %}
+                    <form method="post" action="{% url 'acesso:inativar_usuario' usuario.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="vm-btn vm-btn-danger">Inativar</button>
+                    </form>
+                    {% endif %}
+                {% else %}
+                    <form method="post" action="{% url 'acesso:ativar_usuario' usuario.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-nova-os">Ativar</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <section class="os-card detalhe-secao">
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Nome</span>
+                <span>{{ usuario.get_full_name|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">E-mail</span>
+                <span>{{ usuario.email|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Superusuário</span>
+                <span>{% if usuario.is_superuser %}Sim{% else %}Não{% endif %}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Grupos</span>
+                <span>
+                    {% for grupo in usuario.groups.all %}
+                        {{ grupo.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}—
+                    {% endfor %}
+                </span>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

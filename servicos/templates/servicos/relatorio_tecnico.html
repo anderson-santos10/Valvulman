@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Relatório de Assistência Técnica - Valvulman{% endblock %}
+{% block page_heading %}Relatório técnico{% endblock %}
+{% block breadcrumb %}Operação{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/relatorio_tecnico.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form method="post" class="form-report" data-valvulas-url="{% url 'servicos:valvulas_por_cliente' 0 %}">
+    {% csrf_token %}
+
+    {% if form.errors %}
+        <div class="form-alert" role="alert">
+            <p><strong>Não foi possível salvar o relatório.</strong></p>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>
+                            {% if field != "__all__" %}{{ field }}: {% endif %}{{ error }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+    <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr>
+            <!-- EMPRESA -->
+            <td rowspan="2" width="30%" align="center" valign="middle">
+                <h2><b>VALVULMAN</b></h2>
+                <div style="margin: 8px 0;">
+                    <img src="{% static 'img/logo_valvulman.svg' %}" alt="Logo Valvulman" style="max-width: 140px; height: auto;">
+                </div>
+                <small>
+                    Rua Professora Berta de Camargo Vieira, 1308<br>
+                    CEP 17512-400 - Fone: (14) 3306-2778<br>
+                    Sta. Antonieta - Marília SP
+                </small>
+            </td>
+
+            <!-- TÍTULO -->
+            <td colspan="3" align="center" valign="middle">
+                <h3><b>RELATÓRIO DE ASSISTÊNCIA TÉCNICA</b></h3>
+                <h4><b>"VÁLVULAS DE SEGURANÇA"</b></h4>
+            </td>
+
+            <!-- IDENTIFICAÇÃO -->
+            <td width="20%" valign="top">
+                <table border="0" cellpadding="2" cellspacing="0" width="100%">
+                    <tr>
+                        <td><small><b>Nº:</b></small></td>
+                        <td>
+                            <input type="text" name="numero_relatorio" value="{{ relatorio.numero_relatorio|default:'' }}" style="width: 100%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><small><b>FL:</b></small></td>
+                        <td>
+                            <input type="text" name="folha" value="{{ relatorio.folha|default:'01' }}" style="width: 100%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><small><b>ITEM:</b></small></td>
+                        <td>
+                            <input type="text" name="item" value="{{ relatorio.item|default:'' }}" style="width: 100%;">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <!-- CLIENTE / SETOR / DATA -->
+        <tr>
+            <td colspan="2" width="40%">
+                <label for="cliente"><b>CLIENTE:</b></label>
+                <select id="cliente" name="cliente" style="width: 70%;" required>
+                    <option value="">Selecione o cliente</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if relatorio.cliente_id == cliente.pk %}selected{% endif %}>
+                            {{ cliente.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+
+            <td width="20%">
+                <label for="setor"><b>SETOR:</b></label>
+                <input type="text" id="setor" name="setor" value="{{ relatorio.setor|default:'' }}" style="width: 65%;">
+            </td>
+
+            <td width="10%">
+                <label for="data"><b>DATA:</b></label>
+                <input type="date" id="data" name="data" value="{{ relatorio.data|date:'Y-m-d'|default:'' }}" style="width: 100%;">
+            </td>
+        </tr>
+
+        <!-- MOTIVO DO RELATÓRIO -->
+        <tr>
+            <td colspan="5">
+                <b>MOTIVO DO RELATÓRIO:</b> &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" name="motivo_solicitacao_cliente" {% if relatorio.motivo_solicitacao_cliente %}checked{% endif %}>
+                    Solicitação do Cliente
+                </label> &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" name="motivo_manutencao_corretiva" {% if relatorio.motivo_manutencao_corretiva %}checked{% endif %}>
+                    Man. Corretiva
+                </label> &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" name="motivo_garantia" {% if relatorio.motivo_garantia %}checked{% endif %}>
+                    Garantia
+                </label> &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" name="motivo_manutencao_preventiva" {% if relatorio.motivo_manutencao_preventiva %}checked{% endif %}>
+                    Man. Preventiva
+                </label> &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" name="motivo_venda" {% if relatorio.motivo_venda %}checked{% endif %}>
+                    Incluso na Venda
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- =========================================================
+         TABELA DE VÁLVULAS
+    ========================================================== -->
+    <table border="1" cellpadding="4" cellspacing="0" width="100%" id="tabela-valvulas">
+        <thead>
+            <tr>
+                <th colspan="9">DESCRIÇÃO DAS VÁLVULAS</th>
+            </tr>
+            <tr align="center">
+                <th width="5%"><small>ITEM</small></th>
+                <th width="12%"><small>Nº SÉRIE</small></th>
+                <th width="10%"><small>TAG</small></th>
+                <th width="10%"><small>DIÂMETRO</small></th>
+                <th width="12%"><small>MODELO</small></th>
+                <th width="13%"><small>FABRICANTE</small></th>
+                <th width="12%"><small>PRESSÃO DE AJUSTE</small></th>
+                <th width="8%"><small>SERVIÇO</small></th>
+                <th width="18%"><small>OBSERVAÇÃO</small></th>
+            </tr>
+        </thead>
+        <tbody id="valvulas-tbody">
+            {% for valvula in valvulas %}
+            <tr>
+                <td>
+                    <input type="hidden" name="valvula_cadastro[]" value="{{ valvula.valvula_id|default_if_none:'' }}">
+                    <input type="text" name="valvula_item[]" value="{{ valvula.item }}" readonly class="campo-item">
+                </td>
+                <td>
+                    <input type="text" name="valvula_serie[]" value="{{ valvula.numero_serie|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_tag[]" value="{{ valvula.tag|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_diametro[]" value="{{ valvula.diametro|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_modelo[]" value="{{ valvula.modelo|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_fabricante[]" value="{{ valvula.fabricante|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_pressao[]" value="{{ valvula.pressao_psi|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_servico[]" value="{{ valvula.servico|default_if_none:'' }}" autocomplete="off">
+                </td>
+                <td>
+                    <input type="text" name="valvula_observacao[]" value="{{ valvula.observacao|default_if_none:'' }}" autocomplete="off">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- CONTROLES DAS VÁLVULAS -->
+    <div id="valvulas-controles" class="no-print valvulas-relatorio-controles">
+        <button type="button" id="btn-add-item">+ Adicionar Válvula</button>
+        <button type="button" id="btn-remove-item">- Remover Última</button>
+        <label class="valvula-cadastro-label" for="valvula-cadastro-select">Do cadastro:</label>
+        <select id="valvula-cadastro-select" disabled>
+            <option value="">Selecione o cliente para listar as válvulas</option>
+        </select>
+        <button type="button" id="btn-incluir-cadastro" disabled>Incluir cadastrada</button>
+    </div>
+
+    <br>
+
+    <!-- =========================================================
+         OBSERVAÇÕES
+    ========================================================== -->
+    <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr>
+            <td><b>OBSERVAÇÕES</b></td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="observacoes" name="observacoes" rows="6" placeholder="Informe observações, condições encontradas, recomendações ou outras informações relevantes..." style="width: 100%; box-sizing: border-box; resize: vertical; padding: 8px; font-family: inherit;">{{ relatorio.observacoes|default:'' }}</textarea>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- =========================================================
+         MOTIVO PRINCIPAL DA REFORMA
+    ========================================================== -->
+    <table border="1" cellpadding="4" cellspacing="0" width="100%">
+        <tr>
+            <td colspan="4"><b>MOTIVO PRINCIPAL DA REFORMA</b></td>
+        </tr>
+        <tr>
+            <td width="25%">
+                <label>
+                    <input type="checkbox" name="motivo_instalacao_irregular" {% if relatorio.motivo_instalacao_irregular %}checked{% endif %}>
+                    INSTAL. IRREGULAR
+                </label>
+            </td>
+            <td width="25%">
+                <label>
+                    <input type="checkbox" name="motivo_escolha_inadequada" {% if relatorio.motivo_escolha_inadequada %}checked{% endif %}>
+                    ESCOLHA INAD. VÁLVULA
+                </label>
+            </td>
+            <td width="25%">
+                <label>
+                    <input type="checkbox" name="motivo_condicoes_criticas" {% if relatorio.motivo_condicoes_criticas %}checked{% endif %}>
+                    CONDIÇÕES CRÍTICAS FLUIDO
+                </label>
+            </td>
+            <td width="25%">
+                <label>
+                    <input type="checkbox" name="motivo_entrada_impurezas" {% if relatorio.motivo_entrada_impurezas %}checked{% endif %}>
+                    ENTRADA DE IMPUREZAS
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>
+                    <input type="checkbox" name="motivo_manuseio_irregular" {% if relatorio.motivo_manuseio_irregular %}checked{% endif %}>
+                    MANUSEIO IRREGULAR
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input type="checkbox" name="motivo_transporte_irregular" {% if relatorio.motivo_transporte_irregular %}checked{% endif %}>
+                    TRANSPORTE IRREGULAR
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input type="checkbox" name="motivo_desgaste_normal" {% if relatorio.motivo_desgaste_normal %}checked{% endif %}>
+                    DESGASTE NORMAL
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input type="checkbox" name="motivo_lacre_quebrado" {% if relatorio.motivo_lacre_quebrado %}checked{% endif %}>
+                    LACRE QUEBRADO
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- =========================================================
+         DESCRIÇÃO DOS SERVIÇOS E PRAZO
+    ========================================================== -->
+    <table border="1" cellpadding="4" cellspacing="0" width="100%">
+        <tr>
+            <td width="40%" valign="top">
+                <b>DESCRIÇÃO DOS SERVIÇOS</b><br><br>
+                <small>
+                    <b>A</b> - LIMPAR E POLIR<br>
+                    <b>B</b> - LIMPAR, REUSINAR E LAPIDAR<br>
+                    <b>C</b> - TROCAR PEÇAS<br>
+                    <b>D</b> - CALIBRAR E VER ESTANQUEIDADE<br>
+                    <b>E</b> - LIMPAR<br>
+                    <b>F</b> - LIMPAR E LAPIDAR
+                </small>
+            </td>
+            <td width="35%" valign="top">
+                <br><br>
+                <small>
+                    <b>G</b> - LIMPAR E REUSINAR<br>
+                    <b>H</b> - MUDAR PRÉ-AJUSTE<br>
+                    <b>I</b> - CALIBRAR EM OPERAÇÃO<br>
+                    <b>J</b> - INST. E CALIBRAR EM OPER.<br>
+                    <b>K</b> - MONTAR HC<br>
+                    <b>L</b> - OUTROS
+                </small>
+            </td>
+            <td width="25%" valign="top">
+                <b>PRAZO</b><br><br>
+                <label for="prazo_entrega"><small><b>ENTREGA:</b></small></label>
+                <input type="date" id="prazo_entrega" name="prazo_entrega" value="{{ relatorio.prazo_entrega|date:'Y-m-d'|default:'' }}">
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- =========================================================
+         APROVAÇÃO
+    ========================================================== -->
+    <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr>
+            <td width="40%" valign="top">
+                <b>DATA</b><br><br>
+                <input type="date" name="data_aprovacao" value="{{ relatorio.data_aprovacao|date:'Y-m-d'|default:'' }}">
+            </td>
+            <td width="60%" valign="top" align="center">
+                <b>APROVAÇÃO DO CLIENTE</b><br><br><br>
+                ____________________________________________________<br>
+                <small>ASSINATURA / CARIMBO</small>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+
+    <!-- =========================================================
+         BOTÕES
+    ========================================================== -->
+    <table border="0" width="100%" class="no-print">
+        <tr>
+            <td align="center">
+                {% if relatorio.pk %}
+                    <a href="{% url 'servicos:detalhe_relatorio' relatorio.pk %}" class="btn-voltar-form">Voltar</a>
+                    <button type="submit">Salvar alterações</button>
+                    <a href="{% url 'servicos:imprimir_relatorio' relatorio.pk %}" class="btn-voltar-form">Imprimir</a>
+                {% else %}
+                    <a href="{% url 'servicos:ordens_servico' %}" class="btn-voltar-form">Voltar</a>
+                    <button type="submit">Salvar Relatório</button>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/relatorio_tecnico.js' %}"></script>
+{% endblock %}

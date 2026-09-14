@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Orçamentos | Valvulman{% endblock %}
+{% block page_heading %}Orçamentos{% endblock %}
+{% block breadcrumb %}Comercial{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/orcamentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Orçamentos</h1>
+            <p>Propostas comerciais. A execução técnica continua na ordem de serviço.</p>
+        </div>
+        <a href="{% url 'servicos:cadastrar_orcamento' %}" class="btn-nova-os">+ Novo orçamento</a>
+    </div>
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar número, cliente, CNPJ, instrumento..." autocomplete="off">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    {% for valor, rotulo in status_choices %}
+                        <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="data_de" value="{{ request.GET.data_de|default:'' }}" aria-label="Data inicial">
+                <input type="date" name="data_ate" value="{{ request.GET.data_ate|default:'' }}" aria-label="Data final">
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>Emissão</th>
+                        <th>Validade</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>OS</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orcamento in orcamentos %}
+                    <tr>
+                        <td><strong class="numero-os">{{ orcamento.numero }}</strong></td>
+                        <td>{{ orcamento.cliente_nome_exibicao }}</td>
+                        <td>{{ orcamento.data_emissao|date:"d/m/Y" }}</td>
+                        <td>{{ orcamento.data_validade|date:"d/m/Y"|default:"—" }}</td>
+                        <td>R$ {{ orcamento.total_geral|floatformat:2 }}</td>
+                        <td>{{ orcamento.get_status_display }}</td>
+                        <td>
+                            {% with os=orcamento.ordens_servico.all|first %}
+                                {% if os %}
+                                    <a href="{% url 'servicos:detalhe_ordem' os.pk %}">{{ os.numero }}</a>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_orcamento' orcamento.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:imprimir_orcamento' orcamento.pk %}" class="btn-acao imprimir">Imprimir</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum orçamento</h3>
+                                <p>Registre uma proposta comercial para o cliente.</p>
+                                <a href="{% url 'servicos:cadastrar_orcamento' %}" class="btn-nova-os">+ Novo orçamento</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

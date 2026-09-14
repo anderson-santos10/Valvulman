@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Fila de trabalho | Valvulman{% endblock %}
+{% block page_heading %}Fila de trabalho{% endblock %}
+{% block breadcrumb %}Operação{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Fila de trabalho</h1>
+            <p>Itens das ordens de serviço, por etapa operacional.</p>
+        </div>
+        <a href="{% url 'servicos:lista_ordens' %}" class="btn-acao editar">Listagem</a>
+    </div>
+
+    <h2>Itens</h2>
+    <div class="fila-grid">
+        {% include "servicos/_fila_item.html" with titulo="Recebidos" itens=itens_recebidos %}
+        {% include "servicos/_fila_item.html" with titulo="Em execução" itens=itens_em_execucao %}
+        {% include "servicos/_fila_item.html" with titulo="Aguardando revisão" itens=itens_aguardando_revisao %}
+    </div>
+
+    <h2>Ordens de serviço</h2>
+    <div class="fila-grid">
+        {% include "servicos/_fila_coluna.html" with titulo="Aguardando execução" ordens=aguardando_execucao acao="iniciar" %}
+        {% include "servicos/_fila_coluna.html" with titulo="Em execução" ordens=em_execucao acao="detalhe" %}
+        {% include "servicos/_fila_coluna.html" with titulo="Aguardando revisão" ordens=aguardando_revisao acao="revisao" %}
+        {% include "servicos/_fila_coluna.html" with titulo="Prontas para entrega" ordens=prontas_entrega acao="entregar" %}
+        {% include "servicos/_fila_coluna.html" with titulo="Entregues" ordens=entregues acao="visualizar" %}
+        {% include "servicos/_fila_coluna.html" with titulo="Canceladas" ordens=canceladas acao="visualizar" %}
+    </div>
+</div>
+{% endblock %}

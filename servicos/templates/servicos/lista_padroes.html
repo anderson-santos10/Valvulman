@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Padrões de medição | Valvulman{% endblock %}
+{% block page_heading %}Padrões{% endblock %}
+{% block breadcrumb %}Cadastros{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Padrões de medição</h1>
+            <p>Cadastro mestre dos padrões utilizados nas calibrações do laboratório.</p>
+        </div>
+        <a href="{% url 'servicos:cadastrar_padrao' %}" class="btn-nova-os">+ Novo padrão</a>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header instrumentos-toolbar">
+            <form method="get" class="instrumentos-filtros">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar código, identificação, fabricante, série, certificado..." autocomplete="off">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    <option value="ativo" {% if request.GET.status == "ativo" %}selected{% endif %}>Ativos</option>
+                    <option value="inativo" {% if request.GET.status == "inativo" %}selected{% endif %}>Inativos</option>
+                </select>
+                <select name="unidade">
+                    <option value="">Todas as unidades</option>
+                    {% for valor, rotulo in unidades %}
+                        <option value="{{ valor }}" {% if request.GET.unidade == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="fabricante">
+                    <option value="">Todos os fabricantes</option>
+                    {% for fabricante in fabricantes %}
+                        <option value="{{ fabricante }}" {% if request.GET.fabricante == fabricante %}selected{% endif %}>{{ fabricante }}</option>
+                    {% endfor %}
+                </select>
+                <select name="validade">
+                    <option value="">Toda validade</option>
+                    <option value="vigente" {% if request.GET.validade == "vigente" %}selected{% endif %}>Vigente</option>
+                    <option value="vencido" {% if request.GET.validade == "vencido" %}selected{% endif %}>Vencido</option>
+                    <option value="sem_validade" {% if request.GET.validade == "sem_validade" %}selected{% endif %}>Sem validade</option>
+                </select>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Identificação</th>
+                        <th>Tipo</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Certificado</th>
+                        <th>Validade</th>
+                        <th>Status</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for padrao in padroes %}
+                    <tr>
+                        <td><strong class="numero-os">{{ padrao.codigo }}</strong></td>
+                        <td>{{ padrao.identificacao }}</td>
+                        <td>{{ padrao.tipo|default:"—" }}</td>
+                        <td>{{ padrao.fabricante|default:"—" }}</td>
+                        <td>{{ padrao.modelo|default:"—" }}</td>
+                        <td>{{ padrao.numero_serie|default:"—" }}</td>
+                        <td>{{ padrao.numero_certificado|default:"—" }}</td>
+                        <td>{{ padrao.data_validade|date:"d/m/Y"|default:"—" }}</td>
+                        <td>
+                            {% if padrao.ativo %}
+                                <span class="vm-badge vm-badge--success">Ativo</span>
+                            {% else %}
+                                <span class="vm-badge vm-badge--danger">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if padrao.situacao_validade == "vencido" %}
+                                <span class="status pendente">{{ padrao.situacao_validade_display }}</span>
+                            {% elif padrao.situacao_validade == "vigente" %}
+                                <span class="vm-badge vm-badge--success">{{ padrao.situacao_validade_display }}</span>
+                            {% else %}
+                                {{ padrao.situacao_validade_display }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_padrao' padrao.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:editar_padrao' padrao.pk %}" class="btn-acao editar">Editar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum padrão cadastrado</h3>
+                                <p>Cadastre o primeiro padrão de medição do laboratório.</p>
+                                <a href="{% url 'servicos:cadastrar_padrao' %}" class="btn-nova-os">+ Novo padrão</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            <div class="instrumentos-paginacao">
+                <span>Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ paginator.count }}</span>
+                <div class="acoes">
+                    {% if page_obj.has_previous %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&status={{ request.GET.status|default:'' }}&unidade={{ request.GET.unidade|default:'' }}&fabricante={{ request.GET.fabricante|default:''|urlencode }}&validade={{ request.GET.validade|default:'' }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&status={{ request.GET.status|default:'' }}&unidade={{ request.GET.unidade|default:'' }}&fabricante={{ request.GET.fabricante|default:''|urlencode }}&validade={{ request.GET.validade|default:'' }}&page={{ page_obj.next_page_number }}">Próxima</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

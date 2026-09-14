@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Novo usuário | Valvulman{% endblock %}
+{% block page_heading %}Novo usuário{% endblock %}
+{% block breadcrumb %}Acesso / Usuários{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>Novo usuário</h1>
+            <p>A senha é armazenada com o hash padrão do Django.</p>
+        </div>
+        {% include "acesso/_form_usuario.html" with botao_salvar="Salvar usuário" %}
+    </div>
+</div>
+{% endblock %}

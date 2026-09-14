@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Execução {{ item.codigo_equipamento }} | Valvulman{% endblock %}
+{% block page_heading %}Execução de válvula{% endblock %}
+{% block breadcrumb %}Operação / {{ ordem.numero }}{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/valvulas.css' %}">
+<link rel="stylesheet" href="{% static 'css/operacao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>Execução de Válvula</h1>
+            <p>
+                {{ ordem.numero }}
+                · Item {{ item.pk }}
+                · {{ ordem.cliente.nome }}
+                · {{ item.codigo_equipamento }}
+                · Serviço: {{ item.get_servico_solicitado_display }}
+            </p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:detalhe_item_ordem' item.pk %}" class="btn-acao editar">Voltar ao item</a>
+            <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}" class="btn-acao visualizar">Ver OS</a>
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Contexto</h2>
+                <span>
+                    <span class="status">{{ item.get_status_display }}</span>
+                    <span class="status {% if execucao.status == 'concluida' %}aprovado{% else %}pendente{% endif %}">{{ execucao.get_status_display }}</span>
+                    <span class="status {% if execucao.resultado == 'aprovado' %}aprovado{% else %}pendente{% endif %}">{{ execucao.get_resultado_display }}</span>
+                </span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">OS</span>
+                <strong>{{ ordem.numero }}</strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Item</span>
+                <span>{{ item.pk }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <span>{{ ordem.cliente.nome }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Válvula</span>
+                <strong><a href="{% url 'servicos:detalhe_valvula' item.valvula_id %}">{{ execucao.valvula_codigo|default:item.codigo_equipamento }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Serviço</span>
+                <span>{{ item.get_servico_solicitado_display }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Status do item</span>
+                <span>{{ item.get_status_display }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Dados da válvula</h2>
+                <span>Snapshot no momento da execução. Alterações posteriores no cadastro não mudam este registro.</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">TAG</span>
+                <span>{{ execucao.valvula_tag|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Nº de série</span>
+                <span>{{ execucao.valvula_numero_serie|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Fabricante</span>
+                <span>{{ execucao.valvula_fabricante|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Modelo</span>
+                <span>{{ execucao.valvula_modelo|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Diâmetro</span>
+                <span>{{ execucao.valvula_diametro_nominal|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Pressão de ajuste (cadastro/placa)</span>
+                <span>{{ execucao.pressao_ajuste_cadastrada_formatada|default:"—" }}</span>
+            </div>
+        </div>
+        {% if execucao.eh_ensaio %}
+            <p class="form-help">Dados específicos do ensaio técnico serão registrados em etapa posterior.</p>
+        {% endif %}
+    </section>
+
+    <form method="post" action="" class="execucao-valvula-form" id="form-execucao-valvula" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-alert">
+                <div>{{ form.non_field_errors }}</div>
+            </div>
+        {% endif %}
+
+        <section class="os-card detalhe-secao">
+            <div class="os-card-header">
+                <div>
+                    <h2>Execução</h2>
+                </div>
+            </div>
+            <div class="detalhe-grid">
+                <div>
+                    <span class="detalhe-label">Responsável</span>
+                    <span>{{ execucao.executor_nome|default:"—" }}</span>
+                </div>
+                <div>
+                    <span class="detalhe-label">Data início</span>
+                    {% if execucao.pode_editar %}
+                        {{ form.data_inicio }}
+                        {% if form.data_inicio.errors %}<div class="form-error">{{ form.data_inicio.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.data_inicio|date:"d/m/Y"|default:"—" }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="detalhe-label">Data fim</span>
+                    {% if execucao.pode_editar %}
+                        {{ form.data_fim }}
+                        {% if form.data_fim.errors %}<div class="form-error">{{ form.data_fim.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.data_fim|date:"d/m/Y"|default:"—" }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="detalhe-label">Resultado</span>
+                    {% if execucao.pode_editar %}
+                        {{ form.resultado }}
+                        {% if form.resultado.errors %}<div class="form-error">{{ form.resultado.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.get_resultado_display }}</span>
+                    {% endif %}
+                </div>
+                <div class="detalhe-span-2">
+                    <span class="detalhe-label">{% if execucao.eh_manutencao %}Descrição do serviço realizado{% else %}Descrição do serviço{% endif %}</span>
+                    {% if execucao.pode_editar %}
+                        {{ form.descricao_servico }}
+                        {% if form.descricao_servico.errors %}<div class="form-error">{{ form.descricao_servico.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.descricao_servico|default:"—" }}</span>
+                    {% endif %}
+                </div>
+                <div class="detalhe-span-2">
+                    <span class="detalhe-label">Observações</span>
+                    {% if execucao.pode_editar %}
+                        {{ form.observacoes }}
+                        {% if form.observacoes.errors %}<div class="form-error">{{ form.observacoes.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.observacoes|default:"—" }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="os-card detalhe-secao">
+            <div class="os-card-header">
+                <div>
+                    <h2>Revisão</h2>
+                </div>
+            </div>
+            <div class="detalhe-grid">
+                <div>
+                    <span class="detalhe-label">Revisor</span>
+                    <span>{{ execucao.revisor_nome|default:"—" }}</span>
+                </div>
+                <div>
+                    <span class="detalhe-label">Data</span>
+                    <span>{{ execucao.revisado_em|date:"d/m/Y H:i"|default:"—" }}</span>
+                </div>
+                <div class="detalhe-span-2">
+                    <span class="detalhe-label">Observações da revisão</span>
+                    {% if execucao.pode_revisar %}
+                        {{ form.observacoes_revisao }}
+                        {% if form.observacoes_revisao.errors %}<div class="form-error">{{ form.observacoes_revisao.errors.0 }}</div>{% endif %}
+                    {% else %}
+                        <span>{{ execucao.observacoes_revisao|default:"—" }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </form>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Ações</h2>
+            </div>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            {% if execucao.pode_editar %}
+                <button type="submit" form="form-execucao-valvula" class="btn-acao visualizar" formaction="{% url 'servicos:salvar_execucao_valvula' item.pk %}">Salvar rascunho</button>
+                <button type="submit" form="form-execucao-valvula" class="btn-nova-os" formaction="{% url 'servicos:enviar_revisao_execucao_valvula' item.pk %}">Enviar para revisão</button>
+                {% if execucao.pode_cancelar %}
+                    <form method="post" action="{% url 'servicos:cancelar_execucao_valvula' item.pk %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="vm-btn vm-btn-danger">Cancelar execução</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+            {% if execucao.pode_revisar %}
+                <button type="submit" form="form-execucao-valvula" class="btn-nova-os" formaction="{% url 'servicos:revisar_execucao_valvula' item.pk %}">Revisar</button>
+            {% endif %}
+            {% if execucao.pode_concluir %}
+                <form method="post" action="{% url 'servicos:concluir_execucao_valvula' item.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Concluir execução</button>
+                </form>
+            {% endif %}
+            {% if execucao.status == 'concluida' or execucao.status == 'cancelada' %}
+                <p>Registro em modo de visualização.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

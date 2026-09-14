@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Novo orçamento | Valvulman{% endblock %}
+{% block page_heading %}Novo orçamento{% endblock %}
+{% block breadcrumb %}Comercial / Orçamentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/orcamentos.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cadastro-cliente-page">
+    <div class="cadastro-cliente-card">
+        <div class="cadastro-cliente-header">
+            <h1>Novo orçamento</h1>
+            <p>Proposta comercial. A ordem de serviço só é gerada após a aprovação.</p>
+        </div>
+        {% include "servicos/_form_orcamento.html" with botao_salvar="Salvar orçamento" %}
+    </div>
+</div>
+{% endblock %}

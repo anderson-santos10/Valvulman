@@ -1,0 +1,21 @@
+/* CSS de impressão da interface. Documentos A4 oficiais usam folhas próprias
+   (imprimir_*.css, certificados_ensaio_pdf.css, certificado_calibracao.css)
+   e não devem herdar o chrome do app. */
+
+@media print {
+    .vm-sidebar,
+    .sidebar,
+    .vm-topbar,
+    .mobile-toggle-btn,
+    .sidebar-overlay,
+    .user-menu {
+        display: none !important;
+    }
+
+    .vm-shell,
+    .main-content,
+    .vm-main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}

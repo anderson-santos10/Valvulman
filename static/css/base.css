@@ -1,0 +1,3 @@
+/* Compatibilidade: o shell autenticado carrega os CSS pelo templates/base.html
+   (design-system.css, layout.css, pages.css, print.css).
+   Este arquivo não deve usar @import; não é mais a folha principal. */

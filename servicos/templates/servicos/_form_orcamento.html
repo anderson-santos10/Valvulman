@@ -1,0 +1,92 @@
+<form method="post" action="" class="cliente-form calibracao-form" novalidate data-instrumentos-url="{% url 'servicos:instrumentos_por_cliente' 0 %}">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="form-alert"><div>{{ form.non_field_errors }}</div></div>
+    {% endif %}
+    {% if formset.non_form_errors %}
+        <div class="form-alert"><div>{{ formset.non_form_errors }}</div></div>
+    {% endif %}
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">01</div>
+            <div>
+                <h2>Proposta</h2>
+                <p>O orçamento pertence a um cliente. Manômetros e válvulas dos itens devem ser deste cliente.</p>
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.cliente.id_for_label }}">Cliente <span class="required">*</span></label>
+            {{ form.cliente }}
+            {% if form.cliente.errors %}<div class="form-error">{{ form.cliente.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.data_emissao.id_for_label }}">Data de emissão <span class="required">*</span></label>
+                {{ form.data_emissao }}
+                {% if form.data_emissao.errors %}<div class="form-error">{{ form.data_emissao.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.data_validade.id_for_label }}">Validade da proposta</label>
+                {{ form.data_validade }}
+                {% if form.data_validade.errors %}<div class="form-error">{{ form.data_validade.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.condicoes_comerciais.id_for_label }}">Condições comerciais</label>
+            {{ form.condicoes_comerciais }}
+            {% if form.condicoes_comerciais.errors %}<div class="form-error">{{ form.condicoes_comerciais.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.observacoes.id_for_label }}">Observações</label>
+            {{ form.observacoes }}
+            {% if form.observacoes.errors %}<div class="form-error">{{ form.observacoes.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">02</div>
+            <div>
+                <h2>Itens</h2>
+                <p>Serviço, equipamento, descrição comercial, quantidade e valores. O total é calculado no servidor.</p>
+            </div>
+        </div>
+        {{ formset.management_form }}
+        <div class="pontos-toolbar">
+            <button type="button" class="btn-acao visualizar" id="btn-add-item-os">Adicionar item</button>
+            <button type="button" class="btn-acao editar" id="btn-remove-item-os">Remover último</button>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os pontos-formset-table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Serviço</th>
+                        <th>Equipamento</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor unit.</th>
+                        <th>Desconto</th>
+                    </tr>
+                </thead>
+                <tbody id="itens-os-tbody">
+                    {% for item_form in formset %}
+                        {% include "servicos/_formset_item_orcamento.html" with form=item_form %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="item-os-empty-form" class="formset-empty-template">
+            {% include "servicos/_formset_item_orcamento.html" with form=formset.empty_form %}
+        </div>
+    </div>
+
+    <div class="cliente-form-footer">
+        <div class="form-required-info"><span class="required">*</span> Campos obrigatórios</div>
+        <div class="form-actions">
+            <a href="{% url 'servicos:lista_orcamentos' %}" class="btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn-salvar">{{ botao_salvar }}</button>
+        </div>
+    </div>
+</form>

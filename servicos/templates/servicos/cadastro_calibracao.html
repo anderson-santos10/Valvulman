@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nova Calibração | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/calibracoes.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cliente-page">
+    <div class="cliente-page-header">
+        <div class="cliente-header-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+        </div>
+        <div>
+            <h1>Nova Calibração</h1>
+            <p>Registre um ensaio de calibração vinculado a um instrumento.</p>
+        </div>
+    </div>
+
+    <div class="cliente-card">
+        {% include "servicos/_form_calibracao.html" with botao_salvar="Salvar calibração" %}
+    </div>
+</div>
+{% endblock %}

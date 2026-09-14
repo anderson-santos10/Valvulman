@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Certificado {{ certificado.numero }} | Valvulman{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/certificados_ensaio.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/certificados_ensaio.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="ensaio-cert-page">
+    <div class="ensaio-cert-acoes no-print">
+        <a href="{% url 'servicos:detalhe_calibracao' calibracao.pk %}" class="btn-acao editar">Voltar</a>
+        <a href="{% url 'servicos:imprimir_certificado' certificado.pk %}" class="btn-acao visualizar">Abrir impressão</a>
+        <a href="{% url 'servicos:gerar_pdf_certificado' certificado.pk %}" class="btn-acao imprimir">Gerar PDF</a>
+        <button type="button" class="btn-imprimir" id="btn-imprimir-certificado">Imprimir</button>
+        {% if certificado.pode_cancelar %}
+            <form method="post" action="{% url 'servicos:cancelar_certificado' certificado.pk %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="vm-btn vm-btn-danger">Cancelar certificado</button>
+            </form>
+        {% endif %}
+    </div>
+    {% include "servicos/_documento_certificado_ensaio.html" %}
+</div>
+{% endblock %}

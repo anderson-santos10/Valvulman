@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Calibrações | Valvulman{% endblock %}
+{% block page_heading %}Calibrações{% endblock %}
+{% block breadcrumb %}Operação{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Calibrações</h1>
+            <p>Ensaios registrados para os instrumentos cadastrados.</p>
+        </div>
+        <a href="{% url 'servicos:cadastrar_calibracao' %}" class="btn-nova-os">
+            + Nova Calibração
+        </a>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar número, instrumento, TAG, série, cliente..." autocomplete="off">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    {% for valor, rotulo in status_choices %}
+                        <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="resultado">
+                    <option value="">Todos os resultados</option>
+                    {% for valor, rotulo in resultado_choices %}
+                        <option value="{{ valor }}" {% if request.GET.resultado == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="tipo">
+                    <option value="">Todos os tipos</option>
+                    {% for valor, rotulo in tipos_instrumento %}
+                        <option value="{{ valor }}" {% if request.GET.tipo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select name="unidade">
+                    <option value="">Todas as unidades</option>
+                    {% for valor, rotulo in unidades %}
+                        <option value="{{ valor }}" {% if request.GET.unidade == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="data_de" value="{{ request.GET.data_de|default:'' }}">
+                <input type="date" name="data_ate" value="{{ request.GET.data_ate|default:'' }}">
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Instrumento</th>
+                        <th>TAG</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Resultado</th>
+                        <th>Tolerância</th>
+                        <th>Pontos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for calibracao in calibracoes %}
+                    <tr>
+                        <td><strong class="numero-os">{{ calibracao.numero }}</strong></td>
+                        <td>{{ calibracao.instrumento.codigo }}</td>
+                        <td>{{ calibracao.instrumento.tag|default:"—" }}</td>
+                        <td>{{ calibracao.instrumento.cliente.nome }}</td>
+                        <td>{{ calibracao.data_calibracao|date:"d/m/Y" }}</td>
+                        <td>
+                            {% if calibracao.status == "concluida" %}
+                                <span class="vm-badge vm-badge--success">{{ calibracao.get_status_display }}</span>
+                            {% elif calibracao.status == "cancelada" %}
+                                <span class="status pendente">{{ calibracao.get_status_display }}</span>
+                            {% else %}
+                                <span class="status pendente">{{ calibracao.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ calibracao.get_resultado_display }}</td>
+                        <td>{{ calibracao.tolerancia_formatada|default:"—" }}</td>
+                        <td>{{ calibracao.total_pontos }}</td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_calibracao' calibracao.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                {% if calibracao.pode_editar %}
+                                    <a href="{% url 'servicos:editar_calibracao' calibracao.pk %}" class="btn-acao editar">Editar</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhuma calibração registrada</h3>
+                                <p>Cadastre o primeiro ensaio de um instrumento.</p>
+                                <a href="{% url 'servicos:cadastrar_calibracao' %}" class="btn-nova-os">+ Nova Calibração</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

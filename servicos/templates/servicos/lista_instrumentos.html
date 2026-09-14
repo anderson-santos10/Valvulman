@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Instrumentos | Valvulman{% endblock %}
+{% block page_heading %}Instrumentos{% endblock %}
+{% block breadcrumb %}Cadastros{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/instrumentos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Instrumentos</h1>
+            <p>
+                {% if cliente_filtro %}
+                    Cadastro mestre do cliente
+                    <a href="{% url 'clientes:detalhe_cliente' cliente_filtro.pk %}">{{ cliente_filtro.nome }}</a>.
+                {% else %}
+                    Cadastro mestre dos instrumentos de medição por cliente.
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'servicos:cadastrar_instrumento' %}{% if cliente_filtro %}?cliente={{ cliente_filtro.pk }}{% endif %}" class="btn-nova-os">
+            + Novo Instrumento
+        </a>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header instrumentos-toolbar">
+            <form method="get" class="instrumentos-filtros">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar código, TAG, série, fabricante..." autocomplete="off">
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ cliente.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <select name="tipo">
+                    <option value="">Todos os tipos</option>
+                    {% for valor, rotulo in tipos_instrumento %}
+                        <option value="{{ valor }}" {% if request.GET.tipo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    <option value="ativo" {% if request.GET.status == "ativo" %}selected{% endif %}>Ativos</option>
+                    <option value="inativo" {% if request.GET.status == "inativo" %}selected{% endif %}>Inativos</option>
+                </select>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Cliente</th>
+                        <th>Tipo</th>
+                        <th>Fabricante</th>
+                        <th>Modelo</th>
+                        <th>Nº série</th>
+                        <th>Faixa</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instrumento in instrumentos %}
+                    <tr>
+                        <td>
+                            <strong class="numero-os">{{ instrumento.codigo }}</strong>
+                            {% if instrumento.tag %}
+                                <div class="cliente-info"><span>TAG: {{ instrumento.tag }}</span></div>
+                            {% endif %}
+                        </td>
+                        <td>{{ instrumento.cliente.nome }}</td>
+                        <td>{{ instrumento.get_tipo_display }}</td>
+                        <td>{{ instrumento.fabricante|default:"—" }}</td>
+                        <td>{{ instrumento.modelo|default:"—" }}</td>
+                        <td>{{ instrumento.numero_serie|default:"—" }}</td>
+                        <td>{{ instrumento.faixa_formatada|default:"—" }}</td>
+                        <td>
+                            {% if instrumento.ativo %}
+                                <span class="vm-badge vm-badge--success">Ativo</span>
+                            {% else %}
+                                <span class="vm-badge vm-badge--danger">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_instrumento' instrumento.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:editar_instrumento' instrumento.pk %}" class="btn-acao editar">Editar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum instrumento cadastrado</h3>
+                                <p>Cadastre o primeiro instrumento de medição do cliente.</p>
+                                <a href="{% url 'servicos:cadastrar_instrumento' %}" class="btn-nova-os">+ Novo Instrumento</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+            <div class="instrumentos-paginacao">
+                <span>
+                    Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ paginator.count }}
+                </span>
+                <div class="acoes">
+                    {% if page_obj.has_previous %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&cliente={{ request.GET.cliente|default:'' }}&tipo={{ request.GET.tipo|default:'' }}&status={{ request.GET.status|default:'' }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a class="btn-acao editar" href="?q={{ request.GET.q|default:''|urlencode }}&cliente={{ request.GET.cliente|default:'' }}&tipo={{ request.GET.tipo|default:'' }}&status={{ request.GET.status|default:'' }}&page={{ page_obj.next_page_number }}">Próxima</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

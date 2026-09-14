@@ -1,0 +1,7 @@
+<div class="vm-empty vazio">
+    <h3>{{ title|default:"Nenhum registro" }}</h3>
+    <p class="vm-text-small">{{ text|default:"Não há itens para exibir." }}</p>
+    {% if action_href and action_label %}
+    <a class="vm-btn vm-btn-primary" href="{{ action_href }}">{{ action_label }}</a>
+    {% endif %}
+</div>

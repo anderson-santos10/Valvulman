@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ ordem.numero }} | Valvulman</title>
+    <link rel="stylesheet" href="{% static 'css/imprimir_ordem.css' %}">
+</head>
+<body>
+    <div class="os-print-acoes no-print">
+        <a href="{% url 'servicos:detalhe_ordem' ordem.pk %}">Voltar</a>
+        <button type="button" id="btn-imprimir-os">Imprimir</button>
+    </div>
+    <article class="os-print-paper">
+        <header class="os-print-header">
+            <img src="{% static 'img/logo_valvulman.svg' %}" alt="Valvulman" width="56" height="56">
+            <div>
+                <strong>VALVULMAN</strong>
+                <span>Gestão técnica</span>
+            </div>
+            <div class="os-print-title">
+                <h1>ORDEM DE SERVIÇO</h1>
+                <p>{{ ordem.numero }}</p>
+            </div>
+        </header>
+        <section>
+            <h2>Cliente</h2>
+            <p><strong>{{ ordem.cliente.nome }}</strong></p>
+            <p>CNPJ {{ ordem.cliente.cnpj }} — {{ ordem.cliente.endereco }}</p>
+        </section>
+        <section>
+            <h2>Dados da ordem</h2>
+            <dl>
+                <div><dt>Entrada</dt><dd>{{ ordem.data_entrada|date:"d/m/Y" }}</dd></div>
+                <div><dt>Previsão</dt><dd>{{ ordem.data_previsao_entrega|date:"d/m/Y"|default:"—" }}</dd></div>
+                <div><dt>Entrega</dt><dd>{{ ordem.data_entrega|date:"d/m/Y"|default:"—" }}</dd></div>
+                <div><dt>Status</dt><dd>{{ ordem.get_status_display }}</dd></div>
+                <div><dt>Solicitante</dt><dd>{{ ordem.solicitante|default:"—" }}</dd></div>
+                <div><dt>Telefone</dt><dd>{{ ordem.telefone_solicitante|default:ordem.contato_solicitante|default:"—" }}</dd></div>
+                <div><dt>E-mail</dt><dd>{{ ordem.email_solicitante|default:"—" }}</dd></div>
+            </dl>
+            {% if ordem.observacoes %}
+                <p>Observações: {{ ordem.observacoes }}</p>
+            {% endif %}
+        </section>
+        <section>
+            <h2>Itens</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>TAG</th>
+                        <th>Série</th>
+                        <th>Serviço</th>
+                        <th>Recebimento</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ordem.itens.all %}
+                    <tr>
+                        <td>{{ item.codigo_equipamento }}</td>
+                        <td>{{ item.tag_equipamento|default:"—" }}</td>
+                        <td>{{ item.serie_equipamento|default:"—" }}</td>
+                        <td>{{ item.get_servico_solicitado_display }}</td>
+                        <td>{{ item.condicao_recebimento|default:"—" }}</td>
+                        <td>{{ item.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="os-print-recebimento">
+            <h2>Entrega / recebimento</h2>
+            <p>Recebido por: ________________________________</p>
+            <p>Data: ____/____/________ &nbsp; Assinatura: ________________________________</p>
+        </section>
+    </article>
+    <script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+</body>
+</html>

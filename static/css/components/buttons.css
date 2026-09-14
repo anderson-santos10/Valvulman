@@ -1,0 +1,139 @@
+/* Legado alinhado ao contrato oficial (vm-btn). */
+
+.btn-nova-os,
+.btn-salvar,
+.btn-novo-cliente,
+.login-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--vm-space-2);
+    min-height: 40px;
+    padding: 0 var(--vm-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-primary);
+    color: #fff;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.btn-nova-os:hover,
+.btn-salvar:hover,
+.btn-novo-cliente:hover,
+.login-button:hover {
+    background: var(--vm-color-primary-dark);
+    color: #fff;
+}
+
+.btn-cancelar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--vm-space-2);
+    min-height: 40px;
+    padding: 0 var(--vm-space-4);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-surface-muted);
+    color: var(--vm-color-text);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background: var(--vm-color-border);
+    color: var(--vm-color-text);
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--vm-space-2);
+    flex-wrap: wrap;
+}
+
+.btn-acao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--vm-space-2);
+    min-height: 32px;
+    padding: 0 var(--vm-space-3);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-sm);
+    background: var(--vm-color-surface);
+    color: var(--vm-color-text);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-acao.visualizar {
+    background: var(--vm-color-primary-light);
+    color: var(--vm-color-primary);
+    border-color: transparent;
+}
+
+.btn-acao.editar {
+    background: var(--vm-color-surface-muted);
+    color: var(--vm-color-text);
+}
+
+.btn-acao.imprimir {
+    background: var(--vm-color-surface);
+    color: var(--vm-color-primary-dark);
+}
+
+.btn-acao.perigo,
+.btn-acao.danger {
+    background: var(--vm-color-danger-bg);
+    color: var(--vm-color-danger);
+    border-color: transparent;
+}
+
+.os-header .btn-acao,
+.os-header .vm-btn-compact,
+.relatorio-detalhe-acoes .btn-acao,
+.relatorio-detalhe-acoes .vm-btn-compact,
+.cliente-page-header .btn-acao,
+.form-actions .vm-btn-compact {
+    min-height: 40px;
+    font-size: 14px;
+    padding: 0 var(--vm-space-4);
+}
+
+.calibracoes-filtros .btn-acao,
+.vm-filter-bar .btn-acao,
+.vm-filter-bar .vm-btn {
+    min-height: 40px;
+}
+
+.btn-nova-os:focus-visible,
+.btn-salvar:focus-visible,
+.btn-cancelar:focus-visible,
+.btn-acao:focus-visible,
+.btn-novo-cliente:focus-visible {
+    outline: 2px solid var(--vm-color-focus);
+    outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+    .os-header .btn-nova-os,
+    .os-header .vm-btn,
+    .form-actions .vm-btn,
+    .btn-salvar,
+    .btn-cancelar,
+    .btn-novo-cliente {
+        width: 100%;
+    }
+}

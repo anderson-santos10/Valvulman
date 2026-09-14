@@ -1,0 +1,417 @@
+/* =========================================================
+   VARIAVEIS E ESTRUTURA GERAL
+========================================================= */
+:root {
+    --primary: #0F2B48;
+    --secondary: #0284C7;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+    --bg-light: #f8fafc;
+}
+
+.cert-wrapper {
+    background-color: #e2e8f0;
+    padding: 30px 10px;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
+}
+
+/* =========================================================
+   BARRA DE AÇÕES (IMPRESSÃO)
+========================================================= */
+.barra-acoes {
+    max-width: 900px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-voltar-impressao {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    text-decoration: none;
+}
+
+.btn-voltar-impressao:hover {
+    background: #f8fafc;
+}
+
+.btn-imprimir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--secondary);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+
+.btn-imprimir:hover {
+    background-color: #0369a1;
+}
+
+/* =========================================================
+   FOLHA A4
+========================================================= */
+.cert-paper {
+    background: #ffffff;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   CABEÇALHO DO DOCUMENTO
+========================================================= */
+.cert-header {
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.company-name {
+    display: block;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 1px;
+}
+
+.company-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.cert-title-box {
+    text-align: right;
+}
+
+.cert-title-box h1 {
+    font-size: 18px;
+    margin: 0;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.cert-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+/* =========================================================
+   SEÇÕES E GRIDS
+========================================================= */
+.cert-section {
+    margin-bottom: 18px;
+    page-break-inside: avoid;
+}
+
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.grid-container {
+    display: grid;
+    gap: 8px;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+.mt-2 { margin-top: 8px; }
+
+.label {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.value {
+    color: var(--text-main);
+}
+
+.standard-box {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 6px;
+    margin-top: 2px;
+}
+
+/* =========================================================
+   TABELAS TÉCNICAS
+========================================================= */
+.tabela-dados {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+.tabela-dados th, 
+.tabela-dados td {
+    border: 1px solid var(--border-color);
+    padding: 6px 5px;
+}
+
+.tabela-dados th {
+    background-color: var(--bg-light);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.tabela-dados tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.empty-msg { padding: 15px; color: var(--text-muted); }
+
+/* =========================================================
+   OBSERVAÇÕES E NOTAS
+========================================================= */
+.obs-content {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.custom-obs {
+    background-color: #fffbe0;
+    border-left: 3px solid #eab308;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+}
+
+.normative-list {
+    margin: 0;
+    padding-left: 15px;
+    color: #475569;
+}
+
+.normative-list li {
+    margin-bottom: 4px;
+}
+
+.standards-footer {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-color);
+    font-size: 10px;
+}
+
+/* =========================================================
+   ASSINATURAS
+========================================================= */
+.signatures-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 35px;
+    text-align: center;
+}
+
+.sig-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sig-line {
+    width: 80%;
+    border-bottom: 1px solid #000000;
+    margin-bottom: 6px;
+}
+
+.sig-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.sig-role {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.sig-crea {
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+.cert-footer {
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+    text-align: center;
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+/* =========================================================
+   CONFIGURAÇÕES DE IMPRESSÃO - FORÇAR 1 PÁGINA A4
+========================================================= */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 4mm 6mm;
+    }
+
+    html, body {
+        height: 100%;
+        background: #ffffff !important;
+        font-size: 9px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .cert-wrapper {
+        padding: 0 !important;
+        background: none !important;
+        min-height: auto !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .cert-paper {
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        border: none !important;
+        width: 100% !important;
+    }
+
+    .cert-header {
+        padding-bottom: 6px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .company-name {
+        font-size: 20px !important;
+    }
+
+    .cert-title-box h1 {
+        font-size: 15px !important;
+    }
+
+    .cert-section {
+        margin-bottom: 6px !important;
+        page-break-inside: avoid !important;
+    }
+
+    .section-title {
+        font-size: 9.5px !important;
+        padding: 2px 6px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .grid-container {
+        padding: 5px 6px !important;
+        gap: 3px !important;
+        font-size: 9.5px !important;
+    }
+
+    .mt-2 {
+        margin-top: 4px !important;
+    }
+
+    .tabela-dados {
+        font-size: 8.5px !important;
+        margin-top: 2px !important;
+    }
+
+    .tabela-dados th, 
+    .tabela-dados td {
+        padding: 2px 3px !important;
+    }
+
+    .obs-content {
+        padding: 5px 8px !important;
+        font-size: 8.5px !important;
+        line-height: 1.25 !important;
+    }
+
+    .custom-obs {
+        padding: 4px 6px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .normative-list li {
+        margin-bottom: 2px !important;
+    }
+
+    .standards-footer {
+        margin-top: 4px !important;
+        padding-top: 3px !important;
+        font-size: 8.5px !important;
+    }
+
+    .signatures-grid {
+        margin-top: 15px !important;
+        gap: 10px !important;
+    }
+
+    .sig-line {
+        margin-bottom: 3px !important;
+    }
+
+    .sig-name {
+        font-size: 9.5px !important;
+    }
+
+    .sig-role, .sig-crea {
+        font-size: 8.5px !important;
+    }
+
+    .cert-footer {
+        margin-top: 10px !important;
+        padding-top: 4px !important;
+        font-size: 8px !important;
+    }
+}

@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação de certificado | Valvulman</title>
+    <link rel="stylesheet" href="{% static 'css/validar_certificado.css' %}">
+</head>
+<body class="validar-page situacao-{{ situacao|default:'nao-encontrado' }}">
+    <article class="validar-card">
+        <p class="validar-marca">VALVULMAN</p>
+        <h1>Certificado de Calibração</h1>
+        {% if encontrado %}
+            <p class="validar-status">{{ rotulo_status }}</p>
+            <dl>
+                <div>
+                    <dt>Número</dt>
+                    <dd>{{ certificado.numero }}</dd>
+                </div>
+                <div>
+                    <dt>Data da calibração</dt>
+                    <dd>{{ calibracao.data_calibracao|date:"d/m/Y" }}</dd>
+                </div>
+                {% if calibracao.data_validade %}
+                <div>
+                    <dt>Validade</dt>
+                    <dd>{{ calibracao.data_validade|date:"d/m/Y" }}</dd>
+                </div>
+                <div>
+                    <dt>Próxima calibração</dt>
+                    <dd>{{ calibracao.data_proxima_calibracao|date:"d/m/Y" }}</dd>
+                </div>
+                {% endif %}
+                <div>
+                    <dt>Instrumento</dt>
+                    <dd>{{ instrumento.get_tipo_display }}</dd>
+                </div>
+                <div>
+                    <dt>Código</dt>
+                    <dd>{{ instrumento.codigo }}</dd>
+                </div>
+                <div>
+                    <dt>TAG</dt>
+                    <dd>{{ instrumento.tag|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Fabricante</dt>
+                    <dd>{{ instrumento.fabricante|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Modelo</dt>
+                    <dd>{{ instrumento.modelo|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Resultado</dt>
+                    <dd>{{ calibracao.get_resultado_display }}</dd>
+                </div>
+            </dl>
+        {% else %}
+            <p class="validar-status">CERTIFICADO NÃO ENCONTRADO</p>
+            <p>O código informado não corresponde a um certificado deste sistema.</p>
+        {% endif %}
+    </article>
+</body>
+</html>

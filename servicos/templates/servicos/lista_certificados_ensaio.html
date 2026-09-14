@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Certificados de calibração | Valvulman{% endblock %}
+{% block page_heading %}Certificados de calibração{% endblock %}
+{% block breadcrumb %}Documentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Certificados de calibração</h1>
+            <p>Documentos emitidos a partir de calibrações concluídas.</p>
+        </div>
+    </div>
+
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar certificado, calibração, instrumento, cliente..." autocomplete="off">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    {% for valor, rotulo in status_choices %}
+                        <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="resultado">
+                    <option value="">Todos os resultados</option>
+                    {% for valor, rotulo in resultado_choices %}
+                        <option value="{{ valor }}" {% if request.GET.resultado == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Certificado</th>
+                        <th>Calibração</th>
+                        <th>Instrumento</th>
+                        <th>TAG</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Validade</th>
+                        <th>Resultado</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificado in certificados %}
+                    <tr>
+                        <td><strong class="numero-os">{{ certificado.numero }}</strong></td>
+                        <td>{{ certificado.calibracao.numero }}</td>
+                        <td>{{ certificado.calibracao.instrumento.codigo }}</td>
+                        <td>{{ certificado.calibracao.instrumento.tag|default:"—" }}</td>
+                        <td>{{ certificado.calibracao.instrumento.cliente.nome }}</td>
+                        <td>{{ certificado.calibracao.data_calibracao|date:"d/m/Y" }}</td>
+                        <td>
+                            {{ certificado.calibracao.data_validade|date:"d/m/Y"|default:"—" }}
+                            {% if certificado.status == "emitido" and certificado.calibracao.validade_expirada %}
+                                <span class="vm-badge vm-badge--danger">Expirado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ certificado.calibracao.get_resultado_display }}</td>
+                        <td>{{ certificado.get_status_display }}</td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_certificado' certificado.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:imprimir_certificado' certificado.pk %}" class="btn-acao imprimir">Imprimir</a>
+                                <a href="{% url 'servicos:gerar_pdf_certificado' certificado.pk %}" class="btn-acao visualizar">PDF</a>
+                                {% if certificado.pode_cancelar %}
+                                    <form method="post" action="{% url 'servicos:cancelar_certificado' certificado.pk %}" class="logout-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="vm-btn vm-btn-secondary">Cancelar</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum certificado emitido</h3>
+                                <p>Conclua uma calibração para emitir o certificado.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% load vm_ui %}
+<nav class="vm-pagination calibracoes-paginacao" aria-label="Paginação">
+    {% if page_obj %}
+    <span class="vm-text-small">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}{% if paginator %} · {{ paginator.count }} registro{{ paginator.count|pluralize }}{% endif %}</span>
+    <div class="acoes">
+        {% if page_obj.has_previous %}
+        <a class="vm-btn vm-btn-secondary vm-btn-compact" href="{% vm_qs page=page_obj.previous_page_number %}">Anterior</a>
+        {% else %}
+        <span class="vm-btn vm-btn-secondary vm-btn-compact is-disabled" aria-disabled="true">Anterior</span>
+        {% endif %}
+        {% if page_obj.has_next %}
+        <a class="vm-btn vm-btn-secondary vm-btn-compact" href="{% vm_qs page=page_obj.next_page_number %}">Próxima</a>
+        {% else %}
+        <span class="vm-btn vm-btn-secondary vm-btn-compact is-disabled" aria-disabled="true">Próxima</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</nav>

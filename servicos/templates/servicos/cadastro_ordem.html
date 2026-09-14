@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nova ordem de serviço | Valvulman{% endblock %}
+{% block page_heading %}Nova OS{% endblock %}
+{% block breadcrumb %}Operação / Ordens de serviço{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ordens_laboratorio.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="cliente-page">
+    <div class="cliente-page-header">
+        <div>
+            <h1>Nova ordem de serviço</h1>
+            <p>Registre o lote recebido do cliente: manômetros, válvulas ou ambos.</p>
+        </div>
+    </div>
+    <div class="cliente-card">
+        {% include "servicos/_form_ordem.html" with botao_salvar="Salvar OS" %}
+    </div>
+</div>
+{% endblock %}

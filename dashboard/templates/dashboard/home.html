@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Dashboard | Valvulman
+{% endblock %}
+
+{% block page_heading %}Dashboard{% endblock %}
+{% block breadcrumb %}Principal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-home">
+    <header class="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>
+            Central de operação da Valvulman. Priorize atrasos, revisões e pendências financeiras.
+        </p>
+    </header>
+
+    {% if not paineis.tem_movimento_visivel %}
+        {% include "components/_empty_state.html" with title="Ainda não existem movimentações registradas." text="Assim que houver OS, calibrações, orçamentos ou movimentações financeiras, os indicadores aparecerão aqui." %}
+    {% endif %}
+
+    {% if ver_operacao and paineis.operacao.tem_dados %}
+    <section class="dashboard-section" aria-label="Operação">
+        <div class="dashboard-section-head">
+            <h2>Operação</h2>
+            <a href="{% url 'servicos:fila_ordens' %}">Ver fila →</a>
+        </div>
+        <div class="dashboard-split">
+            {% include "dashboard/_barras.html" with linhas=paineis.operacao.series titulo="OS por situação" chart_id="os" %}
+            {% if paineis.operacao.kpis or paineis.operacao.alertas %}
+            <div class="dashboard-aside">
+                {% for kpi in paineis.operacao.kpis %}
+                <a class="dashboard-metric" href="{{ kpi.href }}">
+                    <span class="dashboard-metric-label">{{ kpi.rotulo }}</span>
+                    <strong class="dashboard-metric-value">{{ kpi.valor }}</strong>
+                    <span class="dashboard-metric-action">Ver lista →</span>
+                </a>
+                {% endfor %}
+                {% for alerta in paineis.operacao.alertas %}
+                <a class="dashboard-metric is-alert" href="{{ alerta.href }}">
+                    <span class="dashboard-metric-label">{{ alerta.rotulo }}</span>
+                    <strong class="dashboard-metric-value">{{ alerta.valor }}</strong>
+                    <span class="dashboard-metric-action">Tratar atrasos →</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if perms.servicos.view_calibracao and paineis.calibracoes.tem_dados %}
+    <section class="dashboard-section" aria-label="Calibrações">
+        <div class="dashboard-section-head">
+            <h2>Calibrações</h2>
+            <a href="{% url 'servicos:lista_calibracoes' %}">Ver calibrações →</a>
+        </div>
+        <div class="dashboard-split">
+            {% include "dashboard/_barras.html" with linhas=paineis.calibracoes.series titulo="Distribuição das calibrações" chart_id="calibracoes" %}
+            {% if paineis.calibracoes.alertas %}
+            <div class="dashboard-aside">
+                {% for alerta in paineis.calibracoes.alertas %}
+                <a class="dashboard-metric is-alert" href="{{ alerta.href }}">
+                    <span class="dashboard-metric-label">{{ alerta.rotulo }}</span>
+                    <strong class="dashboard-metric-value">{{ alerta.valor }}</strong>
+                    <span class="dashboard-metric-action">Ver instrumentos →</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if ver_comercial and paineis.comercial.tem_dados %}
+    <section class="dashboard-section" aria-label="Comercial">
+        <div class="dashboard-section-head">
+            <h2>Comercial</h2>
+            <a href="{% url 'servicos:lista_orcamentos' %}">Ver orçamentos →</a>
+        </div>
+        <div class="dashboard-split">
+            {% include "dashboard/_barras.html" with linhas=paineis.comercial.series titulo="Orçamentos" chart_id="comercial" %}
+            {% if paineis.comercial.valores or paineis.comercial.alertas %}
+            <div class="dashboard-aside">
+                {% for valor in paineis.comercial.valores %}
+                <a class="dashboard-metric" href="{{ valor.href }}">
+                    <span class="dashboard-metric-label">{{ valor.rotulo }}</span>
+                    <strong class="dashboard-metric-value">R$ {{ valor.valor|floatformat:2 }}</strong>
+                </a>
+                {% endfor %}
+                {% for alerta in paineis.comercial.alertas %}
+                <a class="dashboard-metric is-alert" href="{{ alerta.href }}">
+                    <span class="dashboard-metric-label">{{ alerta.rotulo }}</span>
+                    <strong class="dashboard-metric-value">{{ alerta.valor }}</strong>
+                    <span class="dashboard-metric-action">Ver vencidos →</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if ver_financeiro and paineis.financeiro.tem_dados %}
+    <section class="dashboard-section" aria-label="Financeiro">
+        <div class="dashboard-section-head">
+            <h2>Financeiro</h2>
+            <a href="{% url 'servicos:lista_cobrancas' %}">Ver cobranças →</a>
+        </div>
+        <div class="dashboard-split">
+            {% include "dashboard/_barras.html" with linhas=paineis.financeiro.series titulo="Contas a receber" chart_id="financeiro" %}
+            {% if paineis.financeiro.kpis or paineis.financeiro.alertas %}
+            <div class="dashboard-aside">
+                {% for kpi in paineis.financeiro.kpis %}
+                <a class="dashboard-metric" href="{{ kpi.href }}">
+                    <span class="dashboard-metric-label">{{ kpi.rotulo }}</span>
+                    <strong class="dashboard-metric-value">R$ {{ kpi.valor|floatformat:2 }}</strong>
+                </a>
+                {% endfor %}
+                {% for alerta in paineis.financeiro.alertas %}
+                <a class="dashboard-metric is-alert" href="{{ alerta.href }}">
+                    <span class="dashboard-metric-label">{{ alerta.rotulo }}</span>
+                    <strong class="dashboard-metric-value">{{ alerta.valor }}</strong>
+                    <span class="dashboard-metric-action">Ver vencidas →</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="dashboard-shortcuts-block" aria-label="Atalhos principais">
+        <div class="dashboard-section-head">
+            <h2>Atalhos</h2>
+        </div>
+        <div class="dashboard-shortcuts">
+            <a class="dashboard-card" href="{% url 'clientes:lista_clientes' %}">
+                <span class="dashboard-card-label">Clientes</span>
+                <span class="dashboard-card-text">Empresas atendidas</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_valvulas' %}">
+                <span class="dashboard-card-label">Válvulas</span>
+                <span class="dashboard-card-text">Cadastro por cliente</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_instrumentos' %}">
+                <span class="dashboard-card-label">Instrumentos</span>
+                <span class="dashboard-card-text">Manômetros e pressão</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_padroes' %}">
+                <span class="dashboard-card-label">Padrões</span>
+                <span class="dashboard-card-text">Padrões de medição</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_calibracoes' %}">
+                <span class="dashboard-card-label">Calibrações</span>
+                <span class="dashboard-card-text">Ensaios e pontos</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_orcamentos' %}">
+                <span class="dashboard-card-label">Orçamentos</span>
+                <span class="dashboard-card-text">Propostas comerciais</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_ordens' %}">
+                <span class="dashboard-card-label">Ordens de Serviço</span>
+                <span class="dashboard-card-text">Manômetros e válvulas no mesmo lote</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_cobrancas' %}">
+                <span class="dashboard-card-label">Contas a receber</span>
+                <span class="dashboard-card-text">Cobranças e pagamentos</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:ordens_servico' %}">
+                <span class="dashboard-card-label">Relatórios técnicos</span>
+                <span class="dashboard-card-text">Legado de assistência em válvulas</span>
+            </a>
+            <a class="dashboard-card" href="{% url 'servicos:lista_certificados' %}">
+                <span class="dashboard-card-label">Certificados</span>
+                <span class="dashboard-card-text">Calibração de instrumentos</span>
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

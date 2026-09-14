@@ -1,0 +1,144 @@
+/* Cabeçalhos e wrappers de página usados por vários módulos.
+   Extraído de ordens_servico.css e cadastro_cliente.css sem alteração visual. */
+
+.os-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.os-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.os-header h1 {
+    margin: 0;
+    color: var(--gs-navy, #0F2B48);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.os-header p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.cliente-page,
+.cadastro-cliente-page {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cliente-page-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.cliente-header-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #0f2b48;
+    background: #eaf3f8;
+    border: 1px solid #d7e7f0;
+    border-radius: 10px;
+}
+
+.cliente-page-header h1 {
+    margin: 0;
+    font-size: 25px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #0f2b48;
+}
+
+.cliente-page-header p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.cadastro-cliente-header {
+    padding: 24px 24px 0;
+}
+
+.cadastro-cliente-header h1 {
+    margin: 0;
+    font-size: 26px;
+    line-height: 34px;
+    color: #0f2b48;
+}
+
+.cadastro-cliente-header p {
+    margin: 4px 0 16px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.numero-os {
+    color: var(--gs-blue, #0284C7);
+    font-size: 14px;
+}
+
+.cliente-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cliente-info strong {
+    color: var(--gs-navy, #0F2B48);
+    font-size: 13px;
+}
+
+.cliente-info span {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+@media (max-width: 900px) {
+    .os-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 600px) {
+    .os-header h1 {
+        font-size: 22px;
+        line-height: 28px;
+    }
+
+    .cliente-page-header {
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .cliente-header-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .cliente-page-header h1 {
+        font-size: 21px;
+    }
+
+    .cliente-page-header p {
+        font-size: 13px;
+    }
+}

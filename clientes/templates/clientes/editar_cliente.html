@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Cliente | Valvulman{% endblock %}
+{% block page_heading %}Editar cliente{% endblock %}
+{% block breadcrumb %}Cadastros / Clientes{% endblock %}
+
+{% block extra_css %}
+
+{% include "components/_css_shared.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="cliente-page">
+
+<!-- CABEÇALHO -->
+<div class="cliente-page-header">
+
+    <div class="cliente-header-icon">
+
+        <svg width="24" height="24"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+
+        </svg>
+
+    </div>
+
+    <div>
+
+        <h1>Editar Cliente</h1>
+
+        <p>
+            Atualize os dados do cliente cadastrado no sistema.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- CARD DO FORMULÁRIO -->
+<div class="cliente-card">
+
+    <form method="post"
+          action=""
+          class="cliente-form"
+          novalidate>
+
+        {% csrf_token %}
+
+
+        <!-- ERROS GERAIS -->
+        {% if form.non_field_errors %}
+
+            <div class="form-alert">
+
+                <div class="form-alert-icon">
+
+                    <svg width="20" height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+
+                    </svg>
+
+                </div>
+
+                <div>
+                    {{ form.non_field_errors }}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- DADOS PRINCIPAIS -->
+        <div class="form-section">
+
+            <div class="form-section-header">
+
+                <div class="section-number">
+                    01
+                </div>
+
+                <div>
+
+                    <h2>Dados do cliente</h2>
+
+                    <p>
+                        Atualize os dados básicos para identificação.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- NOME -->
+            <div class="form-group vm-field">
+
+                <label for="{{ form.nome.id_for_label }}">
+
+                    {{ form.nome.label }}
+
+                    <span class="required">*</span>
+
+                </label>
+
+                {{ form.nome }}
+
+                {% if form.nome.errors %}
+
+                    <div class="form-error">
+                        {{ form.nome.errors.0 }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- CNPJ / CEP -->
+            <div class="form-row">
+
+                <div class="form-group vm-field">
+
+                    <label for="{{ form.cnpj.id_for_label }}">
+                        {{ form.cnpj.label }}
+                    </label>
+
+                    {{ form.cnpj }}
+
+                    {% if form.cnpj.errors %}
+
+                        <div class="form-error">
+                            {{ form.cnpj.errors.0 }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group vm-field">
+
+                    <label for="{{ form.cep.id_for_label }}">
+                        {{ form.cep.label }}
+                    </label>
+
+                    {{ form.cep }}
+
+                    {% if form.cep.errors %}
+
+                        <div class="form-error">
+                            {{ form.cep.errors.0 }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- ENDEREÇO -->
+            <div class="form-group vm-field">
+
+                <label for="{{ form.endereco.id_for_label }}">
+                    {{ form.endereco.label }}
+                </label>
+
+                {{ form.endereco }}
+
+                {% if form.endereco.errors %}
+
+                    <div class="form-error">
+                        {{ form.endereco.errors.0 }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="form-group vm-field">
+                <label for="{{ form.contato_principal.id_for_label }}">Contato</label>
+                {{ form.contato_principal }}
+                {% if form.contato_principal.errors %}
+                    <div class="form-error">{{ form.contato_principal.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group vm-field">
+                    <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+                    {{ form.telefone }}
+                    {% if form.telefone.errors %}
+                        <div class="form-error">{{ form.telefone.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group vm-field">
+                    <label for="{{ form.email.id_for_label }}">E-mail</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="form-error">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- RODAPÉ DO FORMULÁRIO -->
+        <div class="cliente-form-footer">
+
+            <div class="form-required-info">
+
+                <span class="required">*</span>
+
+                Campos obrigatórios
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <!-- VOLTAR -->
+                <a
+                    href="{% url 'clientes:detalhe_cliente' object.pk %}"
+                    class="btn-cancelar"
+                >
+
+                    <svg width="17" height="17"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+
+                    </svg>
+
+                    Cancelar
+
+                </a>
+
+
+                <!-- SALVAR -->
+                <button
+                    type="submit"
+                    class="btn-salvar"
+                >
+
+                    <svg width="17" height="17"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+
+                        <polyline points="7 3 7 8 15 8"/>
+
+                    </svg>
+
+                    Salvar Alterações
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="{% static 'clientes/js/cadastro_cliente.js' %}"></script>
+
+{% endblock %}

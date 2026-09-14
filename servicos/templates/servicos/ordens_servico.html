@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Relatórios técnicos legados - Valvulman{% endblock %}
+{% block page_heading %}Relatórios técnicos legados{% endblock %}
+{% block breadcrumb %}Documentos{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="os-container">
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+    <div class="os-header">
+        <div>
+            <h1>Relatórios técnicos legados</h1>
+            <p>Registros históricos de assistência em válvulas. Não são ordens de serviço nem certificados de calibração.</p>
+        </div>
+
+        <a href="{% url 'servicos:relatorio_tecnico' %}" class="btn-nova-os">
+            + Novo relatório legado
+        </a>
+    </div>
+
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
+    <div class="os-resumo">
+        <div class="resumo-card">
+            <span class="resumo-label">Total de Ordens</span>
+            <strong class="resumo-valor">{{ ordens|length }}</strong>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         TABELA
+    ====================================================== -->
+    <div class="os-card">
+        <div class="os-card-header">
+            <div>
+                <h2>Relatórios técnicos legados</h2>
+                <span>Consulta histórica — não substitui a Ordem de Serviço</span>
+            </div>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Nº relatório</th>
+                        <th>CLIENTE</th>
+                        <th>SETOR</th>
+                        <th>DATA</th>
+                        <th>VÁLVULAS</th>
+                        <th>PRAZO</th>
+                        <th>APROVAÇÃO</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for ordem in ordens %}
+                    <tr>
+                        <!-- Nº OS -->
+                        <td>
+                            <strong class="numero-os">
+                                {% if ordem.numero_relatorio %}
+                                    {{ ordem.numero_relatorio }}
+                                {% else %}
+                                    #{{ ordem.pk }}
+                                {% endif %}
+                            </strong>
+                        </td>
+
+                        <!-- CLIENTE -->
+                        <td>
+                            <div class="cliente-info">
+                                <strong>{{ ordem.cliente.nome }}</strong>
+                                {% if ordem.cliente.cnpj %}
+                                    <span>CNPJ: {{ ordem.cliente.cnpj }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <!-- SETOR -->
+                        <td>
+                            {% if ordem.setor %}
+                                {{ ordem.setor }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- DATA -->
+                        <td>
+                            {% if ordem.data %}
+                                {{ ordem.data|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- VÁLVULAS -->
+                        <td>
+                            {% with total_valvulas=ordem.valvulas.all|length %}
+                            <span class="badge-valvulas">
+                                {{ total_valvulas }}
+                                {% if total_valvulas == 1 %}
+                                    válvula
+                                {% else %}
+                                    válvulas
+                                {% endif %}
+                            </span>
+                            {% endwith %}
+                        </td>
+
+                        <!-- PRAZO -->
+                        <td>
+                            {% if ordem.prazo_entrega %}
+                                {{ ordem.prazo_entrega|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="sem-informacao">—</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- APROVAÇÃO -->
+                        <td>
+                            {% if ordem.data_aprovacao %}
+                                <span class="vm-badge vm-badge--success">Aprovada</span>
+                            {% else %}
+                                <span class="status pendente">Pendente</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- AÇÕES -->
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_relatorio' ordem.pk %}" class="btn-acao visualizar" title="Visualizar relatório">
+                                    Visualizar
+                                </a>
+                                <a href="{% url 'servicos:editar_relatorio' ordem.pk %}" class="btn-acao editar" title="Editar relatório">
+                                    Editar
+                                </a>
+                                <a href="{% url 'servicos:imprimir_relatorio' ordem.pk %}" class="btn-acao imprimir" title="Imprimir relatório">
+                                    Imprimir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="tabela-vazia">
+                            <div class="vazio">
+                                <div class="vazio-icone">📋</div>
+                                <h3>Nenhuma ordem de serviço</h3>
+                                <p>Ainda não existem ordens de serviço cadastradas no sistema.</p>
+
+                                <a href="{% url 'servicos:relatorio_tecnico' %}" class="btn-nova-os">
+                                    + Criar primeira ordem
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

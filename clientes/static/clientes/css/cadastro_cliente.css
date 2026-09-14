@@ -1,0 +1,4 @@
+/* Compatibilidade: formulários e chrome de cadastro vivem em
+   static/css/components/ (page-headers, cards, forms, buttons).
+   Templates devem usar {% include "components/_css_shared.html" %}.
+   Este arquivo não define mais regras para não duplicar a fonte. */

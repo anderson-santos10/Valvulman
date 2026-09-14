@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contas a receber | Valvulman{% endblock %}
+{% block page_heading %}Contas a receber{% endblock %}
+{% block breadcrumb %}Financeiro{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/financeiro.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container">
+    <div class="os-header">
+        <div>
+            <h1>Contas a receber</h1>
+            <p>Cobranças comerciais. Documento interno — não é boleto bancário.</p>
+        </div>
+        {% if perms.servicos.add_cobranca %}
+        <a href="{% url 'servicos:cadastrar_cobranca' %}" class="btn-nova-os">+ Nova cobrança</a>
+        {% endif %}
+    </div>
+    <div class="os-card">
+        <div class="os-card-header">
+            <form method="get" class="calibracoes-filtros vm-filter-bar">
+                <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Número, cliente, CNPJ, OS, orçamento..." autocomplete="off">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    {% for valor, rotulo in status_choices %}
+                        <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cliente">
+                    <option value="">Todos os clientes</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.pk }}" {% if request.GET.cliente == cliente.pk|stringformat:"s" %}selected{% endif %}>{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select name="forma_pagamento">
+                    <option value="">Todas as formas</option>
+                    {% for valor, rotulo in forma_choices %}
+                        <option value="{{ valor }}" {% if request.GET.forma_pagamento == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="data_de" value="{{ request.GET.data_de|default:'' }}" aria-label="Emissão inicial">
+                <input type="date" name="data_ate" value="{{ request.GET.data_ate|default:'' }}" aria-label="Emissão final">
+                <label class="filtro-check">
+                    <input type="checkbox" name="vencidas" value="1" {% if request.GET.vencidas %}checked{% endif %}>
+                    Vencidas
+                </label>
+                <label class="filtro-check">
+                    <input type="checkbox" name="pagas" value="1" {% if request.GET.pagas %}checked{% endif %}>
+                    Pagas
+                </label>
+                <button type="submit" class="vm-btn vm-btn-secondary">Filtrar</button>
+                {% if request.GET %}<a class="vm-btn vm-btn-tertiary" href="{{ request.path }}">Limpar filtros</a>{% endif %}
+            </form>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>OS</th>
+                        <th>Emissão</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                        <th>Pago</th>
+                        <th>Saldo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobranca in cobrancas %}
+                    <tr>
+                        <td><strong class="numero-os">{{ cobranca.numero }}</strong></td>
+                        <td>{{ cobranca.cliente.nome }}</td>
+                        <td>
+                            {% if cobranca.ordem_servico_id %}
+                                <a href="{% url 'servicos:detalhe_ordem' cobranca.ordem_servico_id %}">{{ cobranca.ordem_servico.numero }}</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>{{ cobranca.data_emissao|date:"d/m/Y" }}</td>
+                        <td>{{ cobranca.data_vencimento|date:"d/m/Y" }}</td>
+                        <td>R$ {{ cobranca.valor_final|floatformat:2 }}</td>
+                        <td>R$ {{ cobranca.total_pago_agg|floatformat:2 }}</td>
+                        <td>R$ {{ cobranca.saldo_agg|floatformat:2 }}</td>
+                        <td>
+                            <span class="status-cobranca status-{{ cobranca.situacao_codigo }}">{{ cobranca.situacao_rotulo }}</span>
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <a href="{% url 'servicos:detalhe_cobranca' cobranca.pk %}" class="btn-acao visualizar">Visualizar</a>
+                                <a href="{% url 'servicos:imprimir_cobranca' cobranca.pk %}" class="btn-acao imprimir">Imprimir</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="tabela-vazia">Nenhuma cobrança encontrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if is_paginated %}
+            {% include "components/_pagination.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

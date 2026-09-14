@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-label="Valvulman">
+  <rect width="140" height="140" rx="24" fill="#1e3a8a"/>
+  <rect x="10" y="10" width="120" height="120" rx="18" fill="#2563eb"/>
+  <text x="70" y="88" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="800" fill="#ffffff">VM</text>
+</svg>

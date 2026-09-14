@@ -1,0 +1,159 @@
+<form method="post" action="" class="cliente-form instrumento-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-alert">
+            <div>{{ form.non_field_errors }}</div>
+        </div>
+    {% endif %}
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">01</div>
+            <div>
+                <h2>Identificação</h2>
+                <p>Código interno do laboratório e descrição do padrão.</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.codigo.id_for_label }}">Código</label>
+                {{ form.codigo }}
+                {% if form.codigo.errors %}<div class="form-error">{{ form.codigo.errors.0 }}</div>{% endif %}
+                {% if padrao %}
+                    <p class="form-help">O código interno não pode ser alterado nesta edição.</p>
+                {% else %}
+                    <p class="form-help">Deixe em branco para gerar automaticamente (PAD-0001…).</p>
+                {% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.tipo.id_for_label }}">Tipo</label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}<div class="form-error">{{ form.tipo.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.identificacao.id_for_label }}">Identificação <span class="required">*</span></label>
+            {{ form.identificacao }}
+            {% if form.identificacao.errors %}<div class="form-error">{{ form.identificacao.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">02</div>
+            <div>
+                <h2>Equipamento</h2>
+                <p>Dados do fabricante do padrão.</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.fabricante.id_for_label }}">Fabricante</label>
+                {{ form.fabricante }}
+                {% if form.fabricante.errors %}<div class="form-error">{{ form.fabricante.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.modelo.id_for_label }}">Modelo</label>
+                {{ form.modelo }}
+                {% if form.modelo.errors %}<div class="form-error">{{ form.modelo.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.numero_serie.id_for_label }}">Número de série</label>
+            {{ form.numero_serie }}
+            {% if form.numero_serie.errors %}<div class="form-error">{{ form.numero_serie.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">03</div>
+            <div>
+                <h2>Metrologia</h2>
+                <p>Faixa e resolução são opcionais. Use a mesma unidade do padrão.</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.faixa_minima.id_for_label }}">Faixa mínima</label>
+                {{ form.faixa_minima }}
+                {% if form.faixa_minima.errors %}<div class="form-error">{{ form.faixa_minima.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.faixa_maxima.id_for_label }}">Faixa máxima</label>
+                {{ form.faixa_maxima }}
+                {% if form.faixa_maxima.errors %}<div class="form-error">{{ form.faixa_maxima.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.unidade.id_for_label }}">Unidade</label>
+                {{ form.unidade }}
+                {% if form.unidade.errors %}<div class="form-error">{{ form.unidade.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.resolucao.id_for_label }}">Resolução</label>
+                {{ form.resolucao }}
+                {% if form.resolucao.errors %}<div class="form-error">{{ form.resolucao.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">04</div>
+            <div>
+                <h2>Rastreabilidade</h2>
+                <p>Documento do padrão, distinto do certificado emitido para o instrumento do cliente. Sem data de validade, o sistema não afirma prazo.</p>
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.numero_certificado.id_for_label }}">Número do certificado do padrão</label>
+            {{ form.numero_certificado }}
+            {% if form.numero_certificado.errors %}<div class="form-error">{{ form.numero_certificado.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.data_calibracao.id_for_label }}">Calibrado em</label>
+                {{ form.data_calibracao }}
+                {% if form.data_calibracao.errors %}<div class="form-error">{{ form.data_calibracao.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.data_validade.id_for_label }}">Válido até</label>
+                {{ form.data_validade }}
+                {% if form.data_validade.errors %}<div class="form-error">{{ form.data_validade.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-header">
+            <div class="section-number">05</div>
+            <div>
+                <h2>Observações</h2>
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.observacoes.id_for_label }}">Observações</label>
+            {{ form.observacoes }}
+            {% if form.observacoes.errors %}<div class="form-error">{{ form.observacoes.errors.0 }}</div>{% endif %}
+        </div>
+        {% if padrao %}
+        <div class="form-group vm-field">
+            <label class="checkbox-line">
+                {{ form.ativo }} Ativo
+            </label>
+            {% if form.ativo.errors %}<div class="form-error">{{ form.ativo.errors.0 }}</div>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="cliente-form-footer">
+        <div class="form-required-info"><span class="required">*</span> Campos obrigatórios</div>
+        <div class="form-actions">
+            <a href="{% url 'servicos:lista_padroes' %}" class="btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn-salvar">{{ botao_salvar }}</button>
+        </div>
+    </div>
+</form>

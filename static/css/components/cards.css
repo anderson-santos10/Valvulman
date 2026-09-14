@@ -1,0 +1,68 @@
+.os-resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--vm-space-3);
+    margin-bottom: var(--vm-space-5);
+}
+
+.resumo-card,
+.vm-metric {
+    background: var(--vm-color-surface);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-md);
+    padding: var(--vm-space-4) var(--vm-space-5);
+    box-shadow: var(--vm-shadow-sm);
+}
+
+.resumo-label {
+    display: block;
+    color: var(--vm-color-text-secondary);
+    font-size: 13px;
+    margin-bottom: var(--vm-space-2);
+}
+
+.resumo-valor {
+    display: block;
+    color: var(--vm-color-primary-dark);
+    font-size: 24px;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.os-card,
+.cadastro-cliente-card,
+.cliente-card,
+.clientes-card {
+    background: var(--vm-color-surface);
+    border: 1px solid var(--vm-color-border);
+    border-radius: var(--vm-radius-md);
+    overflow: hidden;
+    box-shadow: var(--vm-shadow-sm);
+}
+
+.os-card-header {
+    padding: var(--vm-space-4) var(--vm-space-5);
+    border-bottom: 1px solid var(--vm-color-border);
+    background: var(--vm-color-surface);
+}
+
+.os-card-header h2 {
+    margin: 0;
+    color: var(--vm-color-primary-dark);
+    font-size: 18px;
+}
+
+.os-card-header span {
+    display: block;
+    margin-top: 4px;
+    color: var(--vm-color-text-secondary);
+    font-size: 13px;
+}
+
+@media (max-width: 900px) {
+    .os-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+    .os-resumo { grid-template-columns: 1fr; }
+}

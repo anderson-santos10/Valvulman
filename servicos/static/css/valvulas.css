@@ -1,0 +1,66 @@
+form.logout-form button.btn-acao {
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    font: inherit;
+}
+
+.valvulas-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.valvulas-filtros input,
+.valvulas-filtros select {
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f2b48;
+}
+
+.valvulas-filtros input[type="search"] {
+    min-width: 260px;
+    flex: 1;
+}
+
+.valvulas-paginacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.valvula-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.execucao-valvula-form .detalhe-grid input,
+.execucao-valvula-form .detalhe-grid select,
+.execucao-valvula-form .detalhe-grid textarea {
+    width: 100%;
+    min-height: 38px;
+}
+
+.execucao-valvula-form .form-help {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+@media (max-width: 700px) {
+    .valvula-form .form-row,
+    .valvulas-filtros input[type="search"] {
+        grid-template-columns: 1fr;
+        min-width: 0;
+        width: 100%;
+    }
+}

@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Certificado de Calibração Nº {{ relatorio.numero_relatorio|default:"-" }} - Valvulman{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/certificado_calibracao.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="cert-wrapper">
+
+    <!-- BARRA DE AÇÕES (Invisível na impressão) -->
+    <div class="no-print barra-acoes">
+        <a href="{% url 'servicos:detalhe_relatorio' relatorio.pk %}" class="btn-voltar-impressao">Voltar</a>
+        <button type="button" class="btn-imprimir" onclick="window.print();">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Certificado / Salvar PDF
+        </button>
+    </div>
+
+    <!-- DOCUMENTO A4 -->
+    <div class="cert-paper">
+
+        <!-- CABEÇALHO DO DOCUMENTO -->
+        <header class="cert-header">
+            <div class="header-main">
+                <div class="brand">
+                    <span class="company-name">VALVULMAN</span>
+                    <span class="company-sub">Manutenção e Calibração Industrial</span>
+                </div>
+                <div class="cert-title-box">
+                    <h1>CERTIFICADO DE CALIBRAÇÃO</h1>
+                    <span class="cert-number">Nº {{ relatorio.numero_relatorio|default:"-" }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DADOS DO CLIENTE E REGISTRO -->
+        <section class="cert-section">
+            <div class="section-title">1. IDENTIFICAÇÃO DO CLIENTE E INSTRUMENTO</div>
+            <div class="grid-container grid-4">
+                <div class="col-span-3">
+                    <span class="label">CLIENTE:</span>
+                    <span class="value">{{ cliente.nome|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">CNPJ:</span>
+                    <span class="value">{{ cliente.cnpj|default:"-" }}</span>
+                </div>
+                <div class="col-span-3">
+                    <span class="label">ENDEREÇO:</span>
+                    <span class="value">{{ cliente.endereco|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">CEP:</span>
+                    <span class="value">{{ cliente.cep|default:"-" }}</span>
+                </div>
+            </div>
+
+            <div class="grid-container grid-4 mt-2">
+                <div>
+                    <span class="label">INSTRUMENTO:</span>
+                    <span class="value">Válvula de Segurança</span>
+                </div>
+                <div>
+                    <span class="label">REGISTRO:</span>
+                    <span class="value">{{ relatorio.numero_relatorio|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">TAG:</span>
+                    <span class="value">
+                        {% with primeira_valvula=valvulas.first %}
+                            {{ primeira_valvula.tag|default:"-" }}
+                        {% endwith %}
+                    </span>
+                </div>
+                <div>
+                    <span class="label">SETOR:</span>
+                    <span class="value">{{ relatorio.setor|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">DATA EMISSÃO:</span>
+                    <span class="value">{{ relatorio.data|date:"d/m/Y"|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">FOLHA:</span>
+                    <span class="value">{{ relatorio.folha|default:"01" }}</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="label">ITEM / REF:</span>
+                    <span class="value">{{ relatorio.item|default:"-" }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ESPECIFICAÇÃO TÉCNICA -->
+        <section class="cert-section">
+            <div class="section-title">2. ESPECIFICAÇÃO E PARÂMETROS</div>
+            <div class="grid-container grid-4">
+                <div>
+                    <span class="label">FABRICANTE:</span>
+                    <span class="value">
+                        {% with primeira_valvula=valvulas.first %}{{ primeira_valvula.fabricante|default:"-" }}{% endwith %}
+                    </span>
+                </div>
+                <div>
+                    <span class="label">MODELO:</span>
+                    <span class="value">
+                        {% with primeira_valvula=valvulas.first %}{{ primeira_valvula.modelo|default:"-" }}{% endwith %}
+                    </span>
+                </div>
+                <div>
+                    <span class="label">FAIXA ENTRADA:</span>
+                    <span class="value">{{ certificado.faixa_entrada|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">FAIXA SAÍDA:</span>
+                    <span class="value">{{ certificado.faixa_saida|default:"-" }}</span>
+                </div>
+                <div class="col-span-2">
+                    <span class="label">ESTRATÉGIA:</span>
+                    <span class="value">{{ certificado.estrategia|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">ESTANQUEIDADE:</span>
+                    <span class="value">{{ certificado.estanqueidade|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">ESTADO INTERNO:</span>
+                    <span class="value">{{ certificado.estado_interno|default:"-" }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- VÁLVULAS DO RELATÓRIO -->
+        <section class="cert-section">
+            <div class="section-title">3. RELAÇÃO DE VÁLVULAS</div>
+            <table class="tabela-dados">
+                <thead>
+                    <tr>
+                        <th>ITEM</th>
+                        <th>Nº SÉRIE</th>
+                        <th>TAG</th>
+                        <th>DIÂMETRO</th>
+                        <th>MODELO</th>
+                        <th>FABRICANTE</th>
+                        <th>PRESSÃO</th>
+                        <th>SERVIÇO</th>
+                        <th>OBSERVAÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for valvula in valvulas %}
+                    <tr>
+                        <td class="text-center"><strong>{{ valvula.item }}</strong></td>
+                        <td>{{ valvula.numero_serie|default:"-" }}</td>
+                        <td>{{ valvula.tag|default:"-" }}</td>
+                        <td class="text-center">{{ valvula.diametro|default:"-" }}</td>
+                        <td>{{ valvula.modelo|default:"-" }}</td>
+                        <td>{{ valvula.fabricante|default:"-" }}</td>
+                        <td class="text-center">{{ valvula.pressao_psi|default:"-" }} PSI</td>
+                        <td>{{ valvula.servico|default:"-" }}</td>
+                        <td>{{ valvula.observacao|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center empty-msg">Nenhuma válvula cadastrada neste relatório.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- CALIBRAÇÃO PRELIMINAR -->
+        <section class="cert-section">
+            <div class="section-title">4. CALIBRAÇÃO PRELIMINAR</div>
+            <table class="tabela-dados text-center">
+                <thead>
+                    <tr>
+                        <th class="text-left">ETAPA</th>
+                        <th>REF. <small>(Kgf/cm²)</small></th>
+                        <th>L1 <small>(Kgf/cm²)</small></th>
+                        <th>MÉDIA <small>(Kgf/cm²)</small></th>
+                        <th>ERRO <small>(Kgf/cm²)</small></th>
+                        <th>BLOWDOWN <small>(Kgf/cm²)</small></th>
+                        <th>U <small>(Kgf/cm²)</small></th>
+                        <th>K</th>
+                        <th>VEFF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left"><strong>Fechamento</strong></td>
+                        <td>{{ certificado.pre_fech_ref|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_l1|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_media|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_erro|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_blowdown|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_u|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_k|default:"-" }}</td>
+                        <td>{{ certificado.pre_fech_veff|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><strong>Abertura</strong></td>
+                        <td>{{ certificado.pre_aber_ref|default:"-" }}</td>
+                        <td>{{ certificado.pre_aber_l1|default:"-" }}</td>
+                        <td>{{ certificado.pre_aber_media|default:"-" }}</td>
+                        <td>{{ certificado.pre_aber_erro|default:"-" }}</td>
+                        <td>-</td>
+                        <td>{{ certificado.pre_aber_u|default:"-" }}</td>
+                        <td>{{ certificado.pre_aber_k|default:"-" }}</td>
+                        <td>{{ certificado.pre_aber_veff|default:"-" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- CALIBRAÇÃO FINAL -->
+        <section class="cert-section">
+            <div class="section-title">5. CALIBRAÇÃO FINAL</div>
+            <table class="tabela-dados text-center">
+                <thead>
+                    <tr>
+                        <th class="text-left">ETAPA</th>
+                        <th>REF. <small>(Kgf/cm²)</small></th>
+                        <th>L1 <small>(Kgf/cm²)</small></th>
+                        <th>L2 <small>(Kgf/cm²)</small></th>
+                        <th>L3 <small>(Kgf/cm²)</small></th>
+                        <th>MÉDIA <small>(Kgf/cm²)</small></th>
+                        <th>ERRO <small>(Kgf/cm²)</small></th>
+                        <th>BLOWDOWN</th>
+                        <th>U <small>(Kgf/cm²)</small></th>
+                        <th>K</th>
+                        <th>VEFF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left"><strong>Fechamento</strong></td>
+                        <td>{{ certificado.fin_fech_ref|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_l1|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_l2|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_l3|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_media|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_erro|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_blowdown|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_u|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_k|default:"-" }}</td>
+                        <td>{{ certificado.fin_fech_veff|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><strong>Abertura</strong></td>
+                        <td>{{ certificado.fin_aber_ref|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_l1|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_l2|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_l3|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_media|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_erro|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_blowdown|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_u|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_k|default:"-" }}</td>
+                        <td>{{ certificado.fin_aber_veff|default:"-" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- CONDIÇÕES AMBIENTAIS E PADRÕES -->
+        <section class="cert-section">
+            <div class="section-title">6. CONDIÇÕES AMBIENTAIS E PADRÕES UTILIZADOS</div>
+            <div class="grid-container grid-4">
+                <div>
+                    <span class="label">LOCAL:</span>
+                    <span class="value">{{ certificado.local|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">UMIDADE:</span>
+                    <span class="value">{{ certificado.umidade|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">PRESS. ATM.:</span>
+                    <span class="value">{{ certificado.pressao_atm|default:"-" }}</span>
+                </div>
+                <div>
+                    <span class="label">TEMPERATURA:</span>
+                    <span class="value">{{ certificado.temperatura|default:"-" }}</span>
+                </div>
+                <div class="col-span-4 standard-box">
+                    <span class="label">PADRÃO UTILIZADO:</span>
+                    <span class="value">{{ certificado.padrao_utilizado|default:"-" }}</span> | 
+                    <span class="label">N.S.:</span> <span class="value">{{ certificado.numero_serie_padrao|default:"-" }}</span> | 
+                    <span class="label">Nº CERT.:</span> <span class="value">{{ certificado.numero_certificado_padrao|default:"-" }}</span> | 
+                    <span class="label">PRÓX. CALIB.:</span> <span class="value">{{ certificado.proxima_calibracao_padrao|default:"-" }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- OBSERVAÇÕES E NOTAS NORMATIVAS -->
+        <section class="cert-section">
+            <div class="section-title">7. OBSERVAÇÕES TÉCNICAS E NORMATIVAS</div>
+            <div class="obs-content">
+                {% if relatorio.observacoes %}
+                    <div class="custom-obs">
+                        <strong>Observações específicas:</strong><br>
+                        {{ relatorio.observacoes|linebreaksbr }}
+                    </div>
+                {% endif %}
+
+                <ol class="normative-list">
+                    <li>A incerteza expandida (U) relatada é declarada como a incerteza padrão de medição multiplicada pelo fator de abrangência K, o qual para uma distribuição t com Veff graus de liberdade efetivos corresponde a uma probabilidade de abrangência de aproximadamente 95%.</li>
+                    <li>A incerteza padrão da medição foi determinada de acordo com a publicação EA – 4/02.</li>
+                    <li>Os resultados deste Certificado referem-se exclusivamente ao instrumento submetido à calibração nas condições especificadas, não sendo extensivo a quaisquer lotes.</li>
+                    <li>Este Certificado de Calibração só deve ser reproduzido por completo. Reprodução de partes requer aprovação do laboratório.</li>
+                </ol>
+
+                <div class="standards-footer">
+                    <strong>Norma Aplicada:</strong> {{ certificado.norma|default:"-" }} &nbsp;|&nbsp; 
+                    <strong>Fluido Aplicado:</strong> {{ certificado.fluido|default:"-" }}
+                </div>
+            </div>
+        </section>
+
+        <!-- ASSINATURAS -->
+        <section class="cert-section avoid-break">
+            <div class="signatures-grid">
+                <div class="sig-card">
+                    <div class="sig-line"></div>
+                    <span class="sig-name">{{ certificado.executante|default:"-" }}</span>
+                    <span class="sig-role">José Rosângelo Dos Santos Executante Técnico</span>
+                </div>
+                <div class="sig-card">
+                    <div class="sig-line"></div>
+                    <span class="sig-name">{{ certificado.revisor|default:"-" }}</span>
+                    <span class="sig-role">Revisor Técnico</span>
+                </div>
+                <div class="sig-card">
+                    <div class="sig-line"></div>
+                    <span class="sig-name">{{ certificado.responsavel|default:"-" }}</span>
+                    <span class="sig-role">Responsável Técnico</span>
+                    <span class="sig-crea">CREA-SP: {{ certificado.crea|default:"-" }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RODAPÉ DA PÁGINA -->
+        <footer class="cert-footer">
+            Rua Professora Berta de Camargo Vieira, 1308 – CEP: 17512-400 – Santa Antonieta – Marília – SP | Fone: (14) 3306-2778
+        </footer>
+
+    </div>
+</div>
+
+{% endblock %}

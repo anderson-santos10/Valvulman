@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Calibração {{ calibracao.numero }} | Valvulman{% endblock %}
+{% block page_heading %}{{ calibracao.numero }}{% endblock %}
+{% block breadcrumb %}Operação / Calibrações{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/calibracoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ calibracao.numero }}</h1>
+            <p>{{ calibracao.instrumento.codigo }} — {{ calibracao.instrumento.cliente.nome }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            {% if calibracao.item_ordem_servico_id %}
+                <a href="{% url 'servicos:detalhe_item_ordem' calibracao.item_ordem_servico_id %}" class="btn-acao editar">Voltar ao item</a>
+                <a href="{% url 'servicos:detalhe_ordem' calibracao.item_ordem_servico.ordem_servico_id %}" class="btn-acao visualizar">Ver OS</a>
+            {% else %}
+                <a href="{% url 'servicos:detalhe_instrumento' calibracao.instrumento_id %}" class="btn-acao editar">Voltar</a>
+            {% endif %}
+            {% if calibracao.pode_editar %}
+                <a href="{% url 'servicos:editar_calibracao' calibracao.pk %}" class="btn-nova-os">Editar</a>
+                {% if calibracao.pode_revisar %}
+                <form method="post" action="{% url 'servicos:revisar_calibracao' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Enviar para revisão</button>
+                </form>
+                {% endif %}
+                {% if calibracao.esta_revisada %}
+                <form method="post" action="{% url 'servicos:concluir_calibracao' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Concluir calibração</button>
+                </form>
+                {% endif %}
+                <form method="post" action="{% url 'servicos:cancelar_calibracao' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Cancelar calibração</button>
+                </form>
+            {% endif %}
+            {% if calibracao.pode_reabrir %}
+                <form method="post" action="{% url 'servicos:reabrir_calibracao' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-acao editar">Reabrir rascunho</button>
+                </form>
+            {% endif %}
+            {% if calibracao.status == "concluida" and calibracao.pode_cancelar %}
+                <form method="post" action="{% url 'servicos:cancelar_calibracao' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Cancelar calibração</button>
+                </form>
+            {% endif %}
+            {% if calibracao.pode_emitir_certificado %}
+                <form method="post" action="{% url 'servicos:emitir_certificado' calibracao.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-nova-os">Emitir certificado</button>
+                </form>
+            {% elif calibracao.certificado_atual %}
+                <a href="{% url 'servicos:detalhe_certificado' calibracao.certificado_atual.pk %}" class="btn-acao visualizar">Visualizar certificado</a>
+                <a href="{% url 'servicos:imprimir_certificado' calibracao.certificado_atual.pk %}" class="btn-acao imprimir">Imprimir</a>
+                <a href="{% url 'servicos:gerar_pdf_certificado' calibracao.certificado_atual.pk %}" class="btn-acao visualizar">PDF</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="os-resumo">
+        <div class="resumo-card">
+            <span class="resumo-label">Pontos avaliados</span>
+            <strong class="resumo-valor">{{ resumo.avaliados }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Pontos aprovados</span>
+            <strong class="resumo-valor">{{ resumo.aprovados }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Pontos reprovados</span>
+            <strong class="resumo-valor">{{ resumo.reprovados }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Maior erro absoluto</span>
+            <strong class="resumo-valor">{{ resumo.maior_erro_absoluto_formatado|default:"—" }}</strong>
+        </div>
+        <div class="resumo-card">
+            <span class="resumo-label">Resultado</span>
+            <strong class="resumo-valor">{{ calibracao.get_resultado_display }}</strong>
+        </div>
+    </div>
+
+    {% if calibracao.status == "rascunho" %}
+    <div class="os-card" style="margin-bottom: 1rem;">
+        <p>
+            {% if not calibracao.esta_revisada %}
+                Preencha procedimento, padrão (se houver), critério, tolerância e pontos. Salve em Editar. Em seguida use <strong>Enviar para revisão</strong> (registra o revisor e coloca o item da OS em Aguardando revisão). Depois use <strong>Concluir calibração</strong> para calcular o resultado oficial.
+            {% else %}
+                Revisão registrada. Use <strong>Concluir calibração</strong> para fechar o ensaio. O resultado Aprovado/Reprovado é calculado pelos pontos e pela tolerância.
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Identificação</h2>
+                <span>
+                    <span class="status {% if calibracao.status == 'concluida' %}aprovado{% else %}pendente{% endif %}">{{ calibracao.get_status_display }}</span>
+                    <span class="status {% if calibracao.resultado == 'aprovado' %}aprovado{% elif calibracao.resultado == 'reprovado' %}pendente{% else %}pendente{% endif %}">{{ calibracao.get_resultado_display }}</span>
+                </span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Número</span>
+                <span>{{ calibracao.numero }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Data</span>
+                <span>{{ calibracao.data_calibracao|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Instrumento</span>
+                <strong><a href="{% url 'servicos:detalhe_instrumento' calibracao.instrumento_id %}">{{ calibracao.instrumento.codigo }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' calibracao.instrumento.cliente_id %}">{{ calibracao.instrumento.cliente.nome }}</a></strong>
+            </div>
+            {% if calibracao.item_ordem_servico_id %}
+            <div>
+                <span class="detalhe-label">Ordem de serviço</span>
+                <strong><a href="{% url 'servicos:detalhe_ordem' calibracao.item_ordem_servico.ordem_servico_id %}">{{ calibracao.item_ordem_servico.ordem_servico.numero }}</a></strong>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Procedimento</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Procedimento</span>
+                <span>{{ calibracao.procedimento|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Padrão utilizado</span>
+                {% if calibracao.padrao_id %}
+                    <span>{{ calibracao.padrao_utilizado|linebreaksbr }}</span>
+                    <p class="form-help"><a href="{% url 'servicos:detalhe_padrao' calibracao.padrao_id %}">{{ calibracao.padrao.codigo }}</a></p>
+                {% else %}
+                    <span>{{ calibracao.padrao_utilizado|linebreaksbr|default:"—" }}</span>
+                {% endif %}
+            </div>
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Observações</span>
+                <span>{{ calibracao.observacoes|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Responsabilidade</h2>
+                <span>Execução e revisão registradas no sistema</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Responsável pela execução</span>
+                <span>{{ calibracao.executor_nome|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Data da execução</span>
+                <span>{{ calibracao.executado_em|date:"d/m/Y H:i"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Responsável pela revisão</span>
+                <span>{{ calibracao.revisor_nome|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Data da revisão</span>
+                <span>{{ calibracao.revisado_em|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Validade documental</h2>
+                <span>Prazo de validade do certificado, quando informado. Independente do resultado do ensaio.</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Intervalo (meses)</span>
+                <span>{{ calibracao.intervalo_validade_meses|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Validade</span>
+                <span>{{ calibracao.data_validade|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Próxima calibração</span>
+                <span>{{ calibracao.data_proxima_calibracao|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Critério de aceitação</h2>
+                <span>O resultado não afirma conformidade a uma norma não informada.</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div class="detalhe-span-2">
+                <span class="detalhe-label">Critério</span>
+                <span>{{ calibracao.criterio_aceitacao|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Tolerância</span>
+                <span>{{ calibracao.tolerancia_formatada|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Unidade</span>
+                <span>{{ calibracao.instrumento.get_unidade_display }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Instrumento</h2>
+                <span>Cadastro mestre utilizado neste ensaio</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">TAG</span>
+                <span>{{ calibracao.instrumento.tag|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Número de série</span>
+                <span>{{ calibracao.instrumento.numero_serie|default:"—" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Faixa</span>
+                <span>{{ calibracao.instrumento.faixa_formatada|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Pontos de calibração</h2>
+                <span>Erro = indicação − referência. Aprovado quando |erro| ≤ tolerância.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Ordem</th>
+                        <th>Referência</th>
+                        <th>Indicação</th>
+                        <th>Erro</th>
+                        <th>Tolerância</th>
+                        <th>Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ponto in calibracao.pontos.all %}
+                    <tr>
+                        <td>{{ ponto.ordem }}</td>
+                        <td>{{ ponto.valor_referencia }} {{ calibracao.instrumento.unidade }}</td>
+                        <td>{{ ponto.indicacao_instrumento }} {{ calibracao.instrumento.unidade }}</td>
+                        <td>{{ ponto.erro_formatado }}</td>
+                        <td>{{ calibracao.tolerancia_formatada|default:"—" }}</td>
+                        <td>
+                            {% if ponto.resultado_avaliacao == "aprovado" %}
+                                <span class="vm-badge vm-badge--success">{{ ponto.resultado_avaliacao_display }}</span>
+                            {% elif ponto.resultado_avaliacao == "reprovado" %}
+                                <span class="status pendente">{{ ponto.resultado_avaliacao_display }}</span>
+                            {% else %}
+                                <span class="status pendente">{{ ponto.resultado_avaliacao_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="tabela-vazia">
+                            <div class="vazio">
+                                <h3>Nenhum ponto registrado</h3>
+                                <p>Adicione pontos de ensaio na edição desta calibração.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Certificado</h2>
+                <span>Documento gerado a partir desta calibração</span>
+            </div>
+        </div>
+        {% if calibracao.certificado_atual %}
+            <div class="detalhe-grid">
+                <div>
+                    <span class="detalhe-label">Número</span>
+                    <strong>{{ calibracao.certificado_atual.numero }}</strong>
+                </div>
+                <div>
+                    <span class="detalhe-label">Status</span>
+                    <span>{{ calibracao.certificado_atual.get_status_display }}</span>
+                </div>
+            </div>
+            <p class="acoes">
+                <a href="{% url 'servicos:detalhe_certificado' calibracao.certificado_atual.pk %}" class="btn-acao visualizar">Visualizar</a>
+                <a href="{% url 'servicos:imprimir_certificado' calibracao.certificado_atual.pk %}" class="btn-acao imprimir">Imprimir</a>
+                <a href="{% url 'servicos:gerar_pdf_certificado' calibracao.certificado_atual.pk %}" class="btn-acao visualizar">PDF</a>
+            </p>
+        {% else %}
+            <p>Nenhum certificado emitido para esta calibração.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

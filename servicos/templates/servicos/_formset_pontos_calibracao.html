@@ -1,0 +1,25 @@
+{% load static %}
+<tr class="ponto-form">
+    <td>
+        {{ form.id }}
+        {{ form.ordem }}
+        {% if form.ordem.errors %}<div class="ponto-form-errors">{{ form.ordem.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.valor_referencia }}
+        {% if form.valor_referencia.errors %}<div class="ponto-form-errors">{{ form.valor_referencia.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.indicacao_instrumento }}
+        {% if form.indicacao_instrumento.errors %}<div class="ponto-form-errors">{{ form.indicacao_instrumento.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.observacoes }}
+        {% if form.observacoes.errors %}<div class="ponto-form-errors">{{ form.observacoes.errors.0 }}</div>{% endif %}
+    </td>
+    <td class="ponto-delete">
+        {% if form.DELETE %}
+            {{ form.DELETE }}
+        {% endif %}
+    </td>
+</tr>

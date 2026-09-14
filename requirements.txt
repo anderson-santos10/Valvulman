@@ -1,0 +1,6 @@
+Django==5.2.17
+tzdata==2026.3
+playwright==1.55.0
+pypdf==6.4.0
+segno==1.6.6
+python-dateutil==2.9.0.post0

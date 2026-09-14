@@ -1,0 +1,51 @@
+<form method="post" class="cliente-form calibracao-form" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="form-alert"><div>{{ form.non_field_errors }}</div></div>
+    {% endif %}
+    <div class="form-section">
+        <div class="form-group vm-field">
+            <label for="{{ form.username.id_for_label }}">Usuário</label>
+            {{ form.username }}
+            {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.first_name.id_for_label }}">Nome</label>
+                {{ form.first_name }}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.last_name.id_for_label }}">Sobrenome</label>
+                {{ form.last_name }}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label for="{{ form.email.id_for_label }}">E-mail</label>
+            {{ form.email }}
+        </div>
+        <div class="form-row">
+            <div class="form-group vm-field">
+                <label for="{{ form.senha.id_for_label }}">Senha</label>
+                {{ form.senha }}
+                {% if form.senha.errors %}<div class="form-error">{{ form.senha.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group vm-field">
+                <label for="{{ form.senha_confirmacao.id_for_label }}">Confirmar senha</label>
+                {{ form.senha_confirmacao }}
+                {% if form.senha_confirmacao.errors %}<div class="form-error">{{ form.senha_confirmacao.errors.0 }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="form-group vm-field">
+            <label>{{ form.is_active }} Ativo</label>
+        </div>
+        <div class="form-group vm-field">
+            <label>Grupos</label>
+            {{ form.grupos }}
+            {% if form.grupos.errors %}<div class="form-error">{{ form.grupos.errors.0 }}</div>{% endif %}
+        </div>
+    </div>
+    <div class="form-actions">
+        <a href="{% url 'acesso:lista_usuarios' %}" class="vm-btn vm-btn-secondary">Cancelar</a>
+        <button type="submit" class="btn-nova-os">{{ botao_salvar }}</button>
+    </div>
+</form>

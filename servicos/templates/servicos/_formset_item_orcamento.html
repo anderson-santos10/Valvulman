@@ -1,0 +1,40 @@
+<tr class="item-os-form ponto-form">
+    <td>
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        {{ form.tipo_equipamento }}
+        {{ form.ordem }}
+        {% if form.tipo_equipamento.errors %}<div class="ponto-form-errors">{{ form.tipo_equipamento.errors.0 }}</div>{% endif %}
+        {% if form.non_field_errors %}<div class="ponto-form-errors">{{ form.non_field_errors.0 }}</div>{% endif %}
+        {% if form.DELETE %}<div class="formset-delete">{{ form.DELETE }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.servico }}
+        {% if form.servico.errors %}<div class="ponto-form-errors">{{ form.servico.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        <div class="item-os-equipamento" data-campo="instrumento">
+            {{ form.instrumento }}
+            {% if form.instrumento.errors %}<div class="ponto-form-errors">{{ form.instrumento.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="item-os-equipamento" data-campo="valvula">
+            {{ form.valvula }}
+            {% if form.valvula.errors %}<div class="ponto-form-errors">{{ form.valvula.errors.0 }}</div>{% endif %}
+        </div>
+    </td>
+    <td>
+        {{ form.descricao }}
+        {% if form.descricao.errors %}<div class="ponto-form-errors">{{ form.descricao.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.quantidade }}
+        {% if form.quantidade.errors %}<div class="ponto-form-errors">{{ form.quantidade.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.valor_unitario }}
+        {% if form.valor_unitario.errors %}<div class="ponto-form-errors">{{ form.valor_unitario.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.desconto }}
+        {% if form.desconto.errors %}<div class="ponto-form-errors">{{ form.desconto.errors.0 }}</div>{% endif %}
+    </td>
+</tr>

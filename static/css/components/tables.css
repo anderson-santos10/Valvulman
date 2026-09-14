@@ -1,0 +1,134 @@
+/* Tabelas: wrapper com scroll (A). Sem min-width universal. */
+
+.tabela-wrapper,
+.clientes-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabela-os,
+.clientes-table,
+.vm-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 0;
+}
+
+.tabela-os--wide {
+    min-width: 720px;
+}
+
+.tabela-os thead,
+.clientes-table thead {
+    background: var(--vm-color-surface-muted);
+}
+
+.tabela-os th,
+.clientes-table th {
+    padding: var(--vm-space-3) var(--vm-space-4);
+    border-bottom: 1px solid var(--vm-color-border);
+    color: var(--vm-color-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tabela-os td,
+.clientes-table td {
+    padding: var(--vm-space-3) var(--vm-space-4);
+    border-bottom: 1px solid var(--vm-color-border);
+    color: var(--vm-color-text);
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.tabela-os tbody tr:hover,
+.clientes-table tbody tr:hover {
+    background: var(--vm-color-primary-light);
+}
+
+@media (max-width: 1023px) {
+    .tabela-os:not(.tabela-os--wide) .col-secondary {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .tabela-os:not(.tabela-os--wide) thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .tabela-os:not(.tabela-os--wide),
+    .tabela-os:not(.tabela-os--wide) tbody,
+    .tabela-os:not(.tabela-os--wide) tr,
+    .tabela-os:not(.tabela-os--wide) td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .tabela-os:not(.tabela-os--wide) .col-secondary {
+        display: block;
+    }
+
+    .tabela-os:not(.tabela-os--wide) tr {
+        background: var(--vm-color-surface);
+        border: 1px solid var(--vm-color-border);
+        border-radius: var(--vm-radius-md);
+        margin-bottom: var(--vm-space-3);
+        padding: var(--vm-space-3);
+        box-shadow: var(--vm-shadow-sm);
+    }
+
+    .tabela-os:not(.tabela-os--wide) td {
+        border: 0;
+        padding: var(--vm-space-2) 0;
+    }
+
+    .tabela-os:not(.tabela-os--wide) td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--vm-color-text-muted);
+        margin-bottom: 2px;
+    }
+
+    .tabela-os:not(.tabela-os--wide) tbody tr:hover {
+        background: var(--vm-color-surface);
+    }
+}
+
+.tabela-vazia {
+    padding: 0 !important;
+}
+
+.vazio {
+    padding: var(--vm-space-7) var(--vm-space-5);
+    text-align: center;
+}
+
+.vazio-icone {
+    display: none;
+}
+
+.vazio h3 {
+    margin: 0 0 var(--vm-space-2);
+    color: var(--vm-color-primary-dark);
+    font-size: 18px;
+}
+
+.vazio p {
+    margin: 0 0 var(--vm-space-5);
+    color: var(--vm-color-text-secondary);
+    font-size: 13px;
+}

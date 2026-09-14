@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado {{ certificado.numero }} | Valvulman</title>
+    <link rel="stylesheet" href="{% static 'css/certificados_ensaio.css' %}">
+</head>
+<body class="ensaio-cert-page">
+    <div class="ensaio-cert-acoes no-print">
+        <a href="{% url 'servicos:detalhe_certificado' certificado.pk %}" class="btn-acao editar">Voltar</a>
+        <a href="{% url 'servicos:gerar_pdf_certificado' certificado.pk %}" class="btn-acao imprimir">Gerar PDF</a>
+        <button type="button" class="btn-imprimir" id="btn-imprimir-certificado">Imprimir</button>
+    </div>
+    {% include "servicos/_documento_certificado_ensaio.html" %}
+    <script src="{% static 'js/certificados_ensaio.js' %}"></script>
+</body>
+</html>

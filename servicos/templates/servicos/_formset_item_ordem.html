@@ -1,0 +1,35 @@
+<tr class="item-os-form ponto-form" data-tipo-equipamento="{{ form.tipo_equipamento.value|default:'instrumento' }}">
+    <td>
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        {{ form.tipo_equipamento }}
+        {% if form.tipo_equipamento.errors %}<div class="ponto-form-errors">{{ form.tipo_equipamento.errors.0 }}</div>{% endif %}
+        {% if form.non_field_errors %}<div class="ponto-form-errors">{{ form.non_field_errors.0 }}</div>{% endif %}
+        {% if form.DELETE %}<div class="formset-delete">{{ form.DELETE }}</div>{% endif %}
+    </td>
+    <td>
+        <div class="item-os-equipamento" data-campo="instrumento">
+            {{ form.instrumento }}
+            {% if form.instrumento.errors %}<div class="ponto-form-errors">{{ form.instrumento.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="item-os-equipamento" data-campo="valvula">
+            {{ form.valvula }}
+            {% if form.valvula.errors %}<div class="ponto-form-errors">{{ form.valvula.errors.0 }}</div>{% endif %}
+        </div>
+    </td>
+    <td>
+        {{ form.servico_solicitado }}
+        {% if form.servico_solicitado.errors %}<div class="ponto-form-errors">{{ form.servico_solicitado.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.condicao_recebimento }}
+        {% if form.condicao_recebimento.errors %}<div class="ponto-form-errors">{{ form.condicao_recebimento.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.observacoes_recebimento }}
+        {% if form.observacoes_recebimento.errors %}<div class="ponto-form-errors">{{ form.observacoes_recebimento.errors.0 }}</div>{% endif %}
+    </td>
+    <td>
+        {{ form.observacoes }}
+        {% if form.observacoes.errors %}<div class="ponto-form-errors">{{ form.observacoes.errors.0 }}</div>{% endif %}
+    </td>
+</tr>

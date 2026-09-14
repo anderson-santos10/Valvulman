@@ -1,0 +1,17 @@
+<section class="fila-coluna">
+    <h2>{{ titulo }}</h2>
+    {% for item in itens %}
+        <article class="fila-card{% if item.ordem_servico.esta_atrasada %} is-atrasada{% endif %}">
+            <strong class="numero-os">{{ item.ordem_servico.numero }}</strong>
+            <p>{{ item.codigo_equipamento }} · {{ item.get_tipo_equipamento_display }}</p>
+            <p>{{ item.get_servico_solicitado_display }}</p>
+            <p>{{ item.ordem_servico.cliente.nome }}</p>
+            <div class="fila-card-acoes">
+                <a href="{% url 'servicos:detalhe_item_ordem' item.pk %}" class="btn-acao visualizar">Abrir item</a>
+                <a href="{% url 'servicos:detalhe_ordem' item.ordem_servico_id %}" class="btn-acao editar">Ver OS</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>Nenhum item nesta etapa.</p>
+    {% endfor %}
+</section>

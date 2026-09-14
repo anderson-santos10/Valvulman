@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ cobranca.numero }} | Valvulman{% endblock %}
+{% block page_heading %}{{ cobranca.numero }}{% endblock %}
+{% block breadcrumb %}Financeiro / Cobranças{% endblock %}
+
+{% block extra_css %}
+{% include "components/_css_shared.html" %}
+<link rel="stylesheet" href="{% static 'css/detalhe_relatorio.css' %}">
+<link rel="stylesheet" href="{% static 'css/financeiro.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/financeiro.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="os-container relatorio-detalhe">
+    <div class="os-header">
+        <div>
+            <h1>{{ cobranca.numero }}</h1>
+            <p>{{ cobranca.cliente.nome }} — {{ cobranca.situacao_rotulo }}</p>
+        </div>
+        <div class="relatorio-detalhe-acoes">
+            <a href="{% url 'servicos:lista_cobrancas' %}" class="btn-acao editar">Voltar</a>
+            <a href="{% url 'servicos:imprimir_cobranca' cobranca.pk %}" class="btn-acao imprimir">Imprimir</a>
+            {% if cobranca.pode_editar %}
+                <a href="{% url 'servicos:editar_cobranca' cobranca.pk %}" class="btn-nova-os">Editar</a>
+            {% endif %}
+            {% if cobranca.pode_cancelar and perms.servicos.cancelar_cobranca %}
+                <form method="post" action="{% url 'servicos:cancelar_cobranca' cobranca.pk %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="vm-btn vm-btn-danger">Cancelar cobrança</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Cobrança</h2>
+                <span class="status-cobranca status-{{ cobranca.situacao_codigo }}">{{ cobranca.situacao_rotulo }}</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Número</span>
+                <strong>{{ cobranca.numero }}</strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Cliente</span>
+                <strong><a href="{% url 'clientes:detalhe_cliente' cobranca.cliente_id %}">{{ cobranca.cliente.nome }}</a></strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Emissão</span>
+                <span>{{ cobranca.data_emissao|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Vencimento</span>
+                <span>{{ cobranca.data_vencimento|date:"d/m/Y" }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Descrição</span>
+                <span>{{ cobranca.descricao }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Forma preferencial</span>
+                <span>{{ cobranca.get_forma_pagamento_display|default:"—" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Origem</h2>
+                <span>Vínculos opcionais com orçamento e OS</span>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Orçamento</span>
+                {% if cobranca.orcamento_id %}
+                    <strong><a href="{% url 'servicos:detalhe_orcamento' cobranca.orcamento_id %}">{{ cobranca.orcamento.numero }}</a></strong>
+                {% else %}
+                    <span>—</span>
+                {% endif %}
+            </div>
+            <div>
+                <span class="detalhe-label">Ordem de serviço</span>
+                {% if cobranca.ordem_servico_id %}
+                    <strong><a href="{% url 'servicos:detalhe_ordem' cobranca.ordem_servico_id %}">{{ cobranca.ordem_servico.numero }}</a></strong>
+                {% else %}
+                    <span>—</span>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Valores</h2>
+            </div>
+        </div>
+        <div class="detalhe-grid">
+            <div>
+                <span class="detalhe-label">Valor original</span>
+                <span>R$ {{ cobranca.valor_original|floatformat:2 }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Desconto</span>
+                <span>R$ {{ cobranca.desconto|floatformat:2 }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Acréscimo</span>
+                <span>R$ {{ cobranca.acrescimo|floatformat:2 }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Valor final</span>
+                <strong>R$ {{ cobranca.valor_final|floatformat:2 }}</strong>
+            </div>
+            <div>
+                <span class="detalhe-label">Total pago</span>
+                <span>R$ {{ total_pago|floatformat:2 }}</span>
+            </div>
+            <div>
+                <span class="detalhe-label">Saldo devedor</span>
+                <strong>R$ {{ saldo|floatformat:2 }}</strong>
+            </div>
+        </div>
+        {% if cobranca.observacoes %}
+            <p class="financeiro-obs">{{ cobranca.observacoes }}</p>
+        {% endif %}
+    </section>
+
+    <section class="os-card detalhe-secao">
+        <div class="os-card-header">
+            <div>
+                <h2>Pagamentos</h2>
+                <span>Histórico preservado. Sem exclusão física.</span>
+            </div>
+        </div>
+        <div class="tabela-wrapper">
+            <table class="tabela-os">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Valor</th>
+                        <th>Forma</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pagamento in pagamentos %}
+                    <tr>
+                        <td>{{ pagamento.data_pagamento|date:"d/m/Y" }}</td>
+                        <td>R$ {{ pagamento.valor|floatformat:2 }}</td>
+                        <td>{{ pagamento.get_forma_pagamento_display }}</td>
+                        <td>{{ pagamento.observacoes|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="tabela-vazia">Nenhum pagamento registrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if cobranca.pode_pagar and perms.servicos.registrar_pagamento %}
+            <form method="post" action="{% url 'servicos:registrar_pagamento' cobranca.pk %}" class="pagamento-form">
+                {% csrf_token %}
+                <h3>Registrar pagamento</h3>
+                {% if pagamento_form.non_field_errors %}
+                    <div class="form-alert"><div>{{ pagamento_form.non_field_errors }}</div></div>
+                {% endif %}
+                <div class="form-row">
+                    <div class="form-group vm-field">
+                        <label for="{{ pagamento_form.data_pagamento.id_for_label }}">Data</label>
+                        {{ pagamento_form.data_pagamento }}
+                        {% if pagamento_form.data_pagamento.errors %}<div class="form-error">{{ pagamento_form.data_pagamento.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group vm-field">
+                        <label for="{{ pagamento_form.valor.id_for_label }}">Valor</label>
+                        {{ pagamento_form.valor }}
+                        {% if pagamento_form.valor.errors %}<div class="form-error">{{ pagamento_form.valor.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group vm-field">
+                        <label for="{{ pagamento_form.forma_pagamento.id_for_label }}">Forma</label>
+                        {{ pagamento_form.forma_pagamento }}
+                        {% if pagamento_form.forma_pagamento.errors %}<div class="form-error">{{ pagamento_form.forma_pagamento.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="form-group vm-field">
+                    <label for="{{ pagamento_form.observacoes.id_for_label }}">Observações</label>
+                    {{ pagamento_form.observacoes }}
+                </div>
+                <button type="submit" class="btn-nova-os">Registrar pagamento</button>
+            </form>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
